@@ -1,4 +1,8 @@
-# GSAP, Astro & Webflow Cloud
+# Web Dev Challenge Tribute
+
+This is a tribute to CodeTV's Web Dev Challenge S3.E5. This project uses Webflow's Astro + GSAP template to create a hackathon entry for the [Web Dev Challenge S3.E5 hackathon hosted by Webflow](https://codetv-gsap-cloud.webflow.io/).
+
+## Original Template Notes:
 
 Astro app template with [GSAP](https://gsap.com/) loaded and ready to use, set up for Webflow Cloud. All GSAP plugins — including the formerly premium Club GSAP plugins, which are now 100% free for everyone (including commercial use) thanks to Webflow — are registered and available. Just import what you need from `src/lib/gsap.js`.
 
