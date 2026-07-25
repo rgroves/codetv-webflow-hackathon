@@ -3,6 +3,11 @@
   --sky-bottom: #dff6ff;
   --ink: #123159;
 
+  --cloud: #fbfcff;
+  --sun-glare: #fff8cf;
+  --sun: #ffd665;
+  --sun-shadow: #f29d21;
+
   color-scheme: light;
 }
 
@@ -15,22 +20,4 @@ body {
     linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
   color: var(--ink);
   font-family: "Trebuchet MS", "Verdana", ui-sans-serif, system-ui, sans-serif;
-}
-
-.panel {
-  min-height: 80vh;
-  padding: 8vh 8vw;
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.panel.tall {
-  min-height: 100vh;
-  justify-content: center;
-}
-
-.panel.end {
-  background: #15161a;
 }

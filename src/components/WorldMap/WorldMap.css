@@ -1,6 +1,14 @@
+.world-map {
+  position: relative;
+  overflow: clip;
+  min-height: 100vh;
+}
+
 .map-intro {
   position: relative;
-  max-width: 68rem;
+  z-index: 2;
+  padding: 4.5rem 6vw 2rem;
+  max-width: 42rem;
 }
 
 .map-kicker,
@@ -32,6 +40,67 @@
 .map-caption {
   font-size: clamp(1rem, 2.2vw, 1.2rem);
   line-height: 1.5;
-  max-width: 58rem;
+  max-width: 32rem;
   text-wrap: pretty;
+}
+
+
+/* Sky, Clouds, Sun */
+
+.map-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.map-cloud,
+.map-cloud::before,
+.map-cloud::after {
+  position: absolute;
+  background: var(--cloud);
+  border: 4px solid rgba(18, 49, 89, 0.14);
+  border-radius: 999px;
+  content: "";
+}
+
+.map-cloud {
+  width: 11rem;
+  height: 3.6rem;
+  top: 9rem;
+}
+
+.map-cloud::before {
+  width: 4rem;
+  height: 4rem;
+  left: 1rem;
+  bottom: 1rem;
+}
+
+.map-cloud::after {
+  width: 5rem;
+  height: 5rem;
+  right: 1rem;
+  bottom: 0.7rem;
+}
+
+.map-cloud-left {
+  left: 6vw;
+}
+
+.map-cloud-right {
+  right: 7vw;
+  top: 14rem;
+}
+
+.map-sun {
+  position: absolute;
+  top: 7rem;
+  right: 13vw;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, var(--sun-glare) 0 20%, var(--sun) 20% 62%, var(--sun-shadow) 62% 100%);
+  box-shadow: 0 0 0 6px rgba(255, 237, 145, 0.28);
 }
