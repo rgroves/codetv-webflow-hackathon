@@ -1,13 +1,20 @@
 :root {
-  color-scheme: dark;
+  --sky-top: #8ad0ff;
+  --sky-bottom: #dff6ff;
+  --ink: #123159;
+
+  color-scheme: light;
 }
 
 html,
 body {
+
   margin: 0;
-  background: #0e0f12;
-  color: #f4f4f5;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 22%),
+    linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  color: var(--ink);
+  font-family: "Trebuchet MS", "Verdana", ui-sans-serif, system-ui, sans-serif;
 }
 
 .panel {
