@@ -1,5 +1,7 @@
 ---
 import './MapNode.css'
+
+const { classMods, nodeType, ariaLabel } = Astro.props;
 ---
 
-<button class="node node-start" data-node="start" type="button" aria-label="Start node, move down to begin"></button>
+<button class={`node ${classMods}`} data-node={nodeType} type="button" aria-label={ariaLabel}></button>
