@@ -36,3 +36,11 @@
 .node-y-top {
   top: 12%;
 }
+
+.node-y-mid {
+  top: 50%;
+}
+
+.node-y-bottom {
+  top: 87%;
+}

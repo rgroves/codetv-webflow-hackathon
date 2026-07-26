@@ -38,6 +38,16 @@ import MapPiece from "../components/MapPiece/MapPiece.astro";
           nodeType="entry"
           ariaLabel="Map top section, northmost node"
         />
+        <MapNode
+          classMods="node-x-mid node-y-mid"
+          nodeType="mid"
+          ariaLabel="Map top section, central node"
+        />
+        <MapNode
+          classMods="node-x-mid node-y-bottom"
+          nodeType="stop"
+          ariaLabel="Map top section, southmost node"
+        />
       </MapPiece>
     </WorldMap>
   </body>
