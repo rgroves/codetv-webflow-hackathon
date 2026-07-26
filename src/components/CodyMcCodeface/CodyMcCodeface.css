@@ -1,0 +1,38 @@
+
+.cody {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 7;
+  width: 2.9375rem;
+  height: 5.75rem;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.cody-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 0.2rem;
+  width: 2.5rem;
+  height: 0.8rem;
+  margin-left: -1.25rem;
+  border-radius: 50%;
+  background: rgba(27, 56, 102, 0.22);
+  filter: blur(1px);
+}
+
+.cody-sprite {
+  position: absolute;
+  inset: 0.1rem 0.1rem 0.45rem;
+}
+
+.cody-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 0.18rem 0.18rem rgba(0, 0, 0, 0.22));
+}
