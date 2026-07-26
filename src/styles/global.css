@@ -8,6 +8,12 @@
   --sun: #ffd665;
   --sun-shadow: #f29d21;
 
+  --node-glare: #fff8c4;
+  --node: #ffe670;
+  --node-shadow: #f4b316;
+  --node-ring: #a86511;
+  --node-box-shadow: 168, 101, 17, 0.18;  
+
   color-scheme: light;
 }
 
