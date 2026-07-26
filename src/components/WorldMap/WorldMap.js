@@ -1,4 +1,4 @@
-import { ScrollTrigger } from "../../lib/gsap.js";
+import { gsap, ScrollTrigger } from "../../lib/gsap.js";
 
 /**
  * === Concepts ===
@@ -75,17 +75,40 @@ const pieceMap = new Map(pieceConfigs.map((piece) => [piece.id, piece]));
 const pieceElements = Array.from(root.querySelectorAll("[data-map-piece]"));
 
 // Configure the node graph to define how nodes connect to each other across map pieces.
+// Seam transitions directions should not be defined in the nodeGraph, but rather in the seamTransitions object below.
+// The nodeGraph should only define directional connections within a single map piece.
 const nodeGraph = {
   /**
    * Keys are pieceId:nodeType, e.g. "home:start" or "top:entry".
    */
   "home:start": {
     pieceId: "home",
-    directionTargets: { down: "top:entry" },
+    directionTargets: {},
   },
   "top:entry": {
     pieceId: "top",
-    directionTargets: { up: "home:start" },
+    directionTargets: { down: "top:mid" },
+  },
+  "top:mid": {
+    pieceId: "top",
+    directionTargets: { up: "top:entry", down: "top:stop" },
+  },
+  "top:stop": {
+    pieceId: "top",
+    directionTargets: { up: "top:mid"},
+  },
+};
+
+const seamTransitions = {
+  "home:start": {
+    targetNodeId: "top:entry",
+    targetPieceId: "top",
+    direction: "down",
+  },
+  "top:entry": {
+    targetNodeId: "home:start",
+    targetPieceId: "home",
+    direction: "up",
   },
 };
 
@@ -94,6 +117,7 @@ const state = {
   currentNodeId: null,
   isAnimating: false,
   resizePending: false,
+  handoffInFlight: false,
 };
 
 function setActivePiece(pieceId) {
@@ -190,3 +214,181 @@ function onResize() {
 }
 
 window.addEventListener("resize", onResize);
+
+function getTargetNodeForDirection(direction) {
+  return nodeGraph[state.currentNodeId]?.directionTargets?.[direction] ?? null;
+}
+
+function getSeamTransitionForDirection(nodeId, direction) {
+  const transition = seamTransitions[nodeId];
+
+  if (!transition || transition.direction !== direction) {
+    return null;
+  }
+
+  return transition;
+}
+
+function scrollToPiece(pieceId) {
+  const piece = pieceMap.get(pieceId);
+
+  if (!piece) {
+    return Promise.resolve();
+  }
+
+  state.handoffInFlight = true;
+
+  return new Promise((resolve) => {
+    gsap.to(window, {
+      duration: 0.9,
+      ease: "power2.inOut",
+      scrollTo: { y: piece.element, offsetY: 12 },
+      onComplete: () => {
+        state.handoffInFlight = false;
+        resolve();
+      },
+      onInterrupt: () => {
+        state.handoffInFlight = false;
+        resolve();
+      },
+    });
+  });
+}
+
+async function transitionFromCurrentSeam(direction) {
+  if (state.isAnimating || state.handoffInFlight) {
+    return;
+  }
+
+  console.log(`Attempting to transition from node ${state.currentNodeId} across seam in direction ${direction}.`);
+  const transition = getSeamTransitionForDirection(state.currentNodeId, direction);
+
+  if (!transition) {
+    return;
+  }
+
+  state.isAnimating = true;
+  syncNodeState();
+
+  console.log(`Transitioning from node ${state.currentNodeId} to node ${transition.targetNodeId} across seam in direction ${direction}.`);
+  await scrollToPiece(transition.targetPieceId);
+  state.currentNodeId = transition.targetNodeId;
+  setActivePiece(transition.targetPieceId);
+
+  state.isAnimating = false;
+  syncNodeState();
+  setCodyAtNode(state.currentNodeId);
+}
+
+function getDirectionForMove(fromId, toId) {
+  const targets = nodeGraph[fromId]?.directionTargets ?? {};
+
+  return Object.entries(targets).find(([, candidate]) => candidate === toId)?.[0] ?? null;
+}
+
+function getSeamTransition(nodeId, fromNodeId) {
+  const transition = seamTransitions[nodeId];
+
+  if (!transition || transition.targetNodeId === fromNodeId) {
+    return null;
+  }
+
+  return transition;
+}
+
+async function transitionAcrossSeam(fromNodeId, direction) {
+  const transition = getSeamTransition(state.currentNodeId, fromNodeId);
+
+  if (!transition) {
+    return;
+  }
+
+  await scrollToPiece(transition.targetPieceId);
+  state.currentNodeId = transition.targetNodeId;
+  setActivePiece(transition.targetPieceId);
+  setCodyAtNode(state.currentNodeId);
+}
+
+async function moveCodyTo(targetNodeId) {
+  if (state.isAnimating || state.handoffInFlight || targetNodeId === state.currentNodeId) {
+    return;
+  }
+
+  const currentNodeId = state.currentNodeId;
+  const direction = getDirectionForMove(currentNodeId, targetNodeId);
+
+  if (!direction) {
+    return;
+  }
+
+  const targetPosition = getNodePagePosition(targetNodeId);
+
+  if (!targetPosition) {
+    return;
+  }
+
+  state.isAnimating = true;
+  syncNodeState();
+
+  await gsap.to(cody, {
+    left: targetPosition.x,
+    top: targetPosition.y,
+    duration: 0.45,
+    ease: "power2.inOut",
+  });
+
+  state.currentNodeId = targetNodeId;
+  setActivePiece(nodeGraph[targetNodeId].pieceId);
+  await transitionAcrossSeam(currentNodeId, direction);
+
+  state.isAnimating = false;
+  syncNodeState();
+  setCodyAtNode(state.currentNodeId);
+}
+
+function onKeyDown(event) {
+  const keyMap = {
+    ArrowUp: "up",
+    w: "up",
+    W: "up",
+    ArrowLeft: "left",
+    a: "left",
+    A: "left",
+    ArrowDown: "down",
+    s: "down",
+    S: "down",
+    ArrowRight: "right",
+    d: "right",
+    D: "right",
+  };
+  if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
+    return;
+  }
+
+  const direction = keyMap[event.key];
+
+  if (!direction) {
+    return;
+  }
+
+  console.log(`Key pressed: ${event.key}, mapped to direction: ${direction}.`);
+  const targetNodeId = getTargetNodeForDirection(direction);
+
+  console.log(`Current node: ${state.currentNodeId}, target node for direction "${direction}": ${targetNodeId}.`);
+  if (!targetNodeId) {
+    console.log(`No target node found for direction "${direction}" from current node "${state.currentNodeId}". Checking for seam transition.`);
+    const seamTransition = getSeamTransitionForDirection(state.currentNodeId, direction);
+
+    if (seamTransition) {
+      event.preventDefault();
+      transitionFromCurrentSeam(direction);
+    }
+
+    return;
+  }
+
+  event.preventDefault();
+  moveCodyTo(targetNodeId);
+}
+
+window.addEventListener("keydown", onKeyDown);
