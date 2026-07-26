@@ -27,7 +27,7 @@ import MapPiece from "../components/MapPiece/MapPiece.astro";
         <MapPiece partial={true} name="home">
           <MapNode
             classMods="node-x-mid node-y-top"
-            nodeType="handoff"
+            nodeType="start"
             ariaLabel="Map home section, starting node"
           />
         </MapPiece>
@@ -35,7 +35,7 @@ import MapPiece from "../components/MapPiece/MapPiece.astro";
       <MapPiece name="top">
         <MapNode
           classMods="node-x-mid node-y-top"
-          nodeType="start"
+          nodeType="entry"
           ariaLabel="Map top section, northmost node"
         />
       </MapPiece>
