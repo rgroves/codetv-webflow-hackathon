@@ -9,18 +9,20 @@ interface Props {
 const { name, partial = false }: Props = Astro.props;
 ---
 
-<section class="map-section">
+<>
   {
     partial ? (
       <div class="map-piece-partial" data-map-piece={name}>
         <slot />
       </div>
     ) : (
-      <div class="map-piece" data-map-piece={name}>
-        <div class="piece-frame">
-          <slot />
+      <section class="map-section">
+        <div class="map-piece" data-map-piece={name}>
+          <div class="piece-frame">
+            <slot />
+          </div>
         </div>
-      </div>
+      </section>
     )
   }
-</section>
+</>
