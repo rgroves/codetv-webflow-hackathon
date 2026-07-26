@@ -93,6 +93,7 @@ const state = {
   activeId: null,
   currentNodeId: null,
   isAnimating: false,
+  resizePending: false,
 };
 
 function setActivePiece(pieceId) {
@@ -173,3 +174,19 @@ console.log("World map initialized with pieces:", pieceMap);
 console.log("Active piece set to:", state.activeId);
 console.log("Map pieces configured:", pieceConfigs);
 console.log("World map initialized.");
+
+function onResize() {
+  if (state.resizePending) {
+    return;
+  }
+
+  state.resizePending = true;
+
+  requestAnimationFrame(() => {
+    setCodyAtNode(state.currentNodeId);
+    ScrollTrigger.refresh();
+    state.resizePending = false;
+  });
+}
+
+window.addEventListener("resize", onResize);
