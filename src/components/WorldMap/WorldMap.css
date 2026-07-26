@@ -1,5 +1,3 @@
 .map-section {
-  position: relative;
-  overflow: clip;
   min-height: 100vh;
 }

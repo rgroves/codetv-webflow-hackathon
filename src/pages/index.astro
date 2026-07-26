@@ -5,6 +5,7 @@ import MapSky from '../components/MapSky/MapSky.astro';
 import MapIntro from '../components/MapIntro/MapIntro.astro';
 import MapNode from '../components/MapNode/MapNode.astro';
 import CodyMcCodeface from '../components/CodyMcCodeface/CodyMcCodeface.astro';
+import MapPiece from '../components/MapPiece/MapPiece.astro';
 ---
 
 <html lang="en">
@@ -19,9 +20,14 @@ import CodyMcCodeface from '../components/CodyMcCodeface/CodyMcCodeface.astro';
 		<WorldMap>
 			<MapSky />
 			<MapIntro>
-				<MapNode slot="home-node" classMods="node-start" nodeType="handoff" ariaLabel="Map home section, starting node" />
+				<MapPiece partial={true} name="home">
+					<MapNode classMods="node-x-mid node-y-top" nodeType="handoff" ariaLabel="Map home section, starting node" />
+				</MapPiece>
 			</MapIntro>
 			<CodyMcCodeface />
+			<MapPiece name="top">
+		    <MapNode classMods="node-x-mid node-y-top" nodeType="start" ariaLabel="Map top section, northmost node" />
+			</MapPiece>
 		</WorldMap>
 	</body>
 </html>

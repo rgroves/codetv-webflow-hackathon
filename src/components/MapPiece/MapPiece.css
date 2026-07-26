@@ -1,0 +1,25 @@
+.map-piece-partial {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 5vw 3rem;
+}
+
+.map-piece {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 5vw 3rem;
+  perspective: 1200px;
+}
+
+.piece-frame {
+  position: relative;
+  min-height: calc(100vh - 5rem);
+  border: 6px solid rgba(18, 49, 89, 0.18);
+  border-radius: 2rem;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
+  box-shadow:
+    0 1.4rem 0 rgba(58, 103, 170, 0.2),
+    0 2rem 3rem rgba(18, 49, 89, 0.15);
+}

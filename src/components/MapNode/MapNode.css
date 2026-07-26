@@ -22,7 +22,10 @@
   transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
 }
 
-.node-start {
+.node-x-mid {
   left: 50%;
+}
+
+.node-y-top {
   top: 12%;
 }
