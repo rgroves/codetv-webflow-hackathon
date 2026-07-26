@@ -14,12 +14,19 @@
   margin-top: -2.3rem;
   border-radius: 50%;
   border: 5px solid var(--node-ring);
-  background:
-    radial-gradient(circle at 35% 35%, var(--node-glare) 0 15%, var(--node) 15% 58%, var(--node-shadow) 58% 100%);
+  background: radial-gradient(
+    circle at 35% 35%,
+    var(--node-glare) 0 15%,
+    var(--node) 15% 58%,
+    var(--node-shadow) 58% 100%
+  );
   box-shadow: 0 0.55rem 0 rgba(var(--node-box-shadw));
   cursor: default;
   appearance: none;
-  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .node-x-mid {

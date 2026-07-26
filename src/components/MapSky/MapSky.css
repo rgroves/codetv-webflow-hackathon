@@ -58,7 +58,11 @@
   width: 8rem;
   height: 8rem;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 35%, var(--sun-glare) 0 20%, var(--sun) 20% 62%, var(--sun-shadow) 62% 100%);
+  background: radial-gradient(
+    circle at 35% 35%,
+    var(--sun-glare) 0 20%,
+    var(--sun) 20% 62%,
+    var(--sun-shadow) 62% 100%
+  );
   box-shadow: 0 0 0 6px rgba(255, 237, 145, 0.28);
 }
