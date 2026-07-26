@@ -1,6 +1,9 @@
 ---
 import '../styles/global.css';
 import WorldMap from '../components/WorldMap/WorldMap.astro';
+import MapSky from '../components/MapSky/MapSky.astro';
+import MapIntro from '../components/MapIntro/MapIntro.astro';
+import MapNode from '../components/MapNode/MapNode.astro';
 ---
 
 <html lang="en">
@@ -12,6 +15,11 @@ import WorldMap from '../components/WorldMap/WorldMap.astro';
 		<title>CodeTV Web Dev Challenge S3.E5 Tribute - A CodeTV x Webflow Hackathon Entry</title>
 	</head>
 	<body>
-		<WorldMap />
+		<WorldMap>
+			<MapSky />
+			<MapIntro>
+				<MapNode slot="home-node" />
+			</MapIntro>
+		</WorldMap>
 	</body>
 </html>

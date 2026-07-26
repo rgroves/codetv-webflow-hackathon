@@ -1,0 +1,28 @@
+.node {
+  --node-glare: #fff8c4;
+  --node: #ffe670;
+  --node-shadow: #f4b316;
+  --node-ring: #a86511;
+  --node-box-shadow: 168, 101, 17, 0.18;
+
+  position: absolute;
+  z-index: 4;
+  width: 4.6rem;
+  height: 4.6rem;
+  padding: 0;
+  margin-left: -2.3rem;
+  margin-top: -2.3rem;
+  border-radius: 50%;
+  border: 5px solid var(--node-ring);
+  background:
+    radial-gradient(circle at 35% 35%, var(--node-glare) 0 15%, var(--node) 15% 58%, var(--node-shadow) 58% 100%);
+  box-shadow: 0 0.55rem 0 rgba(var(--node-box-shadw));
+  cursor: default;
+  appearance: none;
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+.node-start {
+  left: 50%;
+  top: 12%;
+}

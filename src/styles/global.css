@@ -3,23 +3,11 @@
   --sky-bottom: #dff6ff;
   --ink: #123159;
 
-  --cloud: #fbfcff;
-  --sun-glare: #fff8cf;
-  --sun: #ffd665;
-  --sun-shadow: #f29d21;
-
-  --node-glare: #fff8c4;
-  --node: #ffe670;
-  --node-shadow: #f4b316;
-  --node-ring: #a86511;
-  --node-box-shadow: 168, 101, 17, 0.18;  
-
   color-scheme: light;
 }
 
 html,
 body {
-
   margin: 0;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 22%),
