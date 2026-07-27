@@ -206,6 +206,7 @@ state.currentNodeId = "home:start";
 setActivePiece("home");
 syncNodeState();
 window.scrollTo(0, 0);
+updateCodyPose("down", 0);
 
 requestAnimationFrame(() => {
   window.scrollTo(0, 0);
@@ -291,6 +292,7 @@ async function transitionFromCurrentSeam(direction) {
 
   state.isAnimating = true;
   syncNodeState();
+  updateCodyPose(direction, 1);
 
   console.log(`Transitioning from node ${state.currentNodeId} to node ${transition.targetNodeId} across seam in direction ${direction}.`);
   await scrollToPiece(transition.targetPieceId);
@@ -298,6 +300,7 @@ async function transitionFromCurrentSeam(direction) {
   setActivePiece(transition.targetPieceId);
 
   state.isAnimating = false;
+  updateCodyPose(direction, 0);
   syncNodeState();
   setCodyAtNode(state.currentNodeId);
 }
@@ -306,6 +309,22 @@ function getDirectionForMove(fromId, toId) {
   const targets = nodeGraph[fromId]?.directionTargets ?? {};
 
   return Object.entries(targets).find(([, candidate]) => candidate === toId)?.[0] ?? null;
+}
+
+function updateCodyPose(direction, intensity = 0) {
+  const tiltMap = { up: 0, down: 0, left: -7, right: 7 };
+  const tilt = tiltMap[direction] ?? 0;
+
+  gsap.set(cody, {
+    xPercent: -50,
+    yPercent: -100,
+    rotate: tilt,
+  });
+
+  gsap.set(cody.querySelector(".cody-sprite"), {
+    transformOrigin: "50% 100%",
+    y: intensity ? -15 : 0,
+  });
 }
 
 function getSeamTransition(nodeId, fromNodeId) {
@@ -329,6 +348,7 @@ async function transitionAcrossSeam(fromNodeId, direction) {
   state.currentNodeId = transition.targetNodeId;
   setActivePiece(transition.targetPieceId);
   setCodyAtNode(state.currentNodeId);
+  updateCodyPose(direction, 1);
 }
 
 async function moveCodyTo(targetNodeId) {
@@ -351,6 +371,7 @@ async function moveCodyTo(targetNodeId) {
 
   state.isAnimating = true;
   syncNodeState();
+  updateCodyPose(direction, 1);
 
   await gsap.to(cody, {
     left: targetPosition.x,
@@ -364,6 +385,7 @@ async function moveCodyTo(targetNodeId) {
   await transitionAcrossSeam(currentNodeId, direction);
 
   state.isAnimating = false;
+  updateCodyPose(direction, 0);
   syncNodeState();
   setCodyAtNode(state.currentNodeId);
 }
