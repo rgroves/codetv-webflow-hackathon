@@ -29,8 +29,16 @@
     opacity 0.2s ease;
 }
 
+.node-x-left{
+  left: 16%;
+}
+
 .node-x-mid {
   left: 50%;
+}
+
+.node-x-right {
+  left: 84%;
 }
 
 .node-y-top {

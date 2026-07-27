@@ -90,15 +90,25 @@ const nodeGraph = {
   },
   "top:entry": {
     pieceId: "top",
-    directionTargets: { down: "top:mid" },
+    directionTargets: { down: "top:junction" },
   },
-  "top:mid": {
+
+  "top:branch-left": {
     pieceId: "top",
-    directionTargets: { up: "top:entry", down: "top:stop" },
+    directionTargets: { right: "top:junction" },
+  },
+  "top:branch-right": {
+    pieceId: "top",
+    directionTargets: { left: "top:junction" },
+  },
+
+  "top:junction": {
+    pieceId: "top",
+    directionTargets: { up: "top:entry", left: "top:branch-left", right: "top:branch-right", down: "top:stop" },
   },
   "top:stop": {
     pieceId: "top",
-    directionTargets: { up: "top:mid"},
+    directionTargets: { up: "top:junction"},
   },
 };
 

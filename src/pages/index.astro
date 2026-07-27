@@ -40,8 +40,18 @@ import MapPiece from "../components/MapPiece/MapPiece.astro";
         />
         <MapNode
           classMods="node-x-mid node-y-mid"
-          nodeType="mid"
+          nodeType="junction"
           ariaLabel="Map top section, central node"
+        />
+        <MapNode
+          classMods="node-x-left node-y-mid"
+          nodeType="branch-left"
+          ariaLabel="Map top section, west node"
+        />
+        <MapNode
+          classMods="node-x-right node-y-mid"
+          nodeType="branch-right"
+          ariaLabel="Map top section, east node"
         />
         <MapNode
           classMods="node-x-mid node-y-bottom"
