@@ -489,3 +489,24 @@ function unlockNativeScroll() {
 }
 
 window.addEventListener("wheel", onWheel, { passive: false });
+
+
+function onNodeClick(event) {
+  console.log("Node click event:", event);
+  const node = event.currentTarget;
+  const targetNodeId = node.dataset.nodeId;
+  const neighbors = Object.values(nodeGraph[state.currentNodeId]?.directionTargets ?? {});
+
+  if (!targetNodeId || !neighbors.includes(targetNodeId)) {
+    return;
+  }
+
+  moveCodyTo(targetNodeId);
+}
+
+pieceConfigs.forEach((piece) => {
+  Object.values(piece.nodes).forEach((node) => {
+    console.log("addinglistiner",node);
+    node.addEventListener("click", onNodeClick);
+  });
+});
