@@ -1,5 +1,8 @@
 import { gsap, ScrollTrigger } from "../../lib/gsap.js";
 
+// Cooldown period in milliseconds to prevent rapid scroll events.
+const SCROLL_WHEEL_COOLDOWN_MS = 300;
+
 /**
  * === Concepts ===
  * The World Map is comprised of different map pieces (home, top, middle, bottom).
@@ -112,12 +115,18 @@ const seamTransitions = {
   },
 };
 
+// Set of center nodes used to prevent scroll movement when Cody McCodeface is
+// not on a center node, to prevent accidental scrolling when on a branch node.
+const centerPathNodes = new Set(Array.from(root.querySelectorAll(".node-x-mid")).map((node) => node.dataset.nodeId));
+
 const state = {
   activeId: null,
   currentNodeId: null,
   isAnimating: false,
   resizePending: false,
   handoffInFlight: false,
+  wheelCooldownUntil: 0,
+  scrollLockCleanup: null,
 };
 
 function setActivePiece(pieceId) {
@@ -237,6 +246,7 @@ function scrollToPiece(pieceId) {
   }
 
   state.handoffInFlight = true;
+  lockNativeScroll();
 
   return new Promise((resolve) => {
     gsap.to(window, {
@@ -245,10 +255,12 @@ function scrollToPiece(pieceId) {
       scrollTo: { y: piece.element, offsetY: 12 },
       onComplete: () => {
         state.handoffInFlight = false;
+        unlockNativeScroll();
         resolve();
       },
       onInterrupt: () => {
         state.handoffInFlight = false;
+        unlockNativeScroll();
         resolve();
       },
     });
@@ -392,3 +404,88 @@ function onKeyDown(event) {
 }
 
 window.addEventListener("keydown", onKeyDown);
+
+
+function onWheel(event) {
+  if (state.isAnimating || state.handoffInFlight || event.deltaY === 0) {
+    return;
+  }
+
+  if (Date.now() < state.wheelCooldownUntil) {
+    event.preventDefault();
+    return;
+  }
+
+  if (!centerPathNodes.has(state.currentNodeId)) {
+    event.preventDefault();
+    return;
+  }
+
+  const direction = event.deltaY > 0 ? "down" : "up";
+  const targetNodeId = getTargetNodeForDirection(direction);
+
+  if (!targetNodeId) {
+    const seamTransition = getSeamTransitionForDirection(state.currentNodeId, direction);
+
+    if (seamTransition) {
+      event.preventDefault();
+      state.wheelCooldownUntil = Date.now() + SCROLL_WHEEL_COOLDOWN_MS;
+      transitionFromCurrentSeam(direction);
+      return;
+    }
+
+    return;
+  }
+
+  event.preventDefault();
+  state.wheelCooldownUntil = Date.now() + SCROLL_WHEEL_COOLDOWN_MS;
+  moveCodyTo(targetNodeId);
+}
+
+function lockNativeScroll() {
+  if (state.scrollLockCleanup) {
+    return;
+  }
+
+  const body = document.body;
+  const previousBodyTouchAction = body.style.touchAction;
+  const blockedKeys = new Set([
+    "ArrowUp",
+    "ArrowDown",
+    "PageUp",
+    "PageDown",
+    "Home",
+    "End",
+    " ",
+  ]);
+
+  const preventScroll = (event) => {
+    event.preventDefault();
+  };
+
+  const preventScrollKeys = (event) => {
+    if (blockedKeys.has(event.key)) {
+      event.preventDefault();
+    }
+  };
+
+  body.style.touchAction = "none";
+
+  window.addEventListener("wheel", preventScroll, { passive: false });
+  window.addEventListener("touchmove", preventScroll, { passive: false });
+  window.addEventListener("keydown", preventScrollKeys, { passive: false });
+
+  state.scrollLockCleanup = () => {
+    body.style.touchAction = previousBodyTouchAction;
+    window.removeEventListener("wheel", preventScroll);
+    window.removeEventListener("touchmove", preventScroll);
+    window.removeEventListener("keydown", preventScrollKeys);
+    state.scrollLockCleanup = null;
+  };
+}
+
+function unlockNativeScroll() {
+  state.scrollLockCleanup?.();
+}
+
+window.addEventListener("wheel", onWheel, { passive: false });
