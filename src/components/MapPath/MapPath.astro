@@ -1,0 +1,37 @@
+---
+import "./MapPath.css";
+
+const { type } = Astro.props;
+let classNames = "";
+
+switch (type) {
+  case "north":
+    classNames = "path-main path-main-top";
+    break;
+
+  case "north-to-south":
+    classNames = "path-main";
+    break;
+
+  case "south":
+    classNames = "path-main  path-main-bottom";
+    break;
+
+  case "east":
+    classNames = "path-branch path-branch-right";
+    break;
+
+  case "east-to-west":
+    classNames = "path-branch";
+    break;
+
+  case "west":
+    classNames = "path-branch path-branch-left";
+    break;
+
+  default:
+    break;
+}
+---
+
+<div class={`path ${classNames}`}></div>

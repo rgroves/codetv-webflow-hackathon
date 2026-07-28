@@ -6,6 +6,7 @@ import MapIntro from "../components/MapIntro/MapIntro.astro";
 import MapNode from "../components/MapNode/MapNode.astro";
 import CodyMcCodeface from "../components/CodyMcCodeface/CodyMcCodeface.astro";
 import MapPiece from "../components/MapPiece/MapPiece.astro";
+import MapPath from "../components/MapPath/MapPath.astro";
 ---
 
 <html lang="en">
@@ -33,6 +34,8 @@ import MapPiece from "../components/MapPiece/MapPiece.astro";
         </MapPiece>
       </MapIntro>
       <MapPiece name="top">
+        <MapPath type="north-to-south"/>
+        <MapPath type="east-to-west" />
         <MapNode
           classMods="node-x-mid node-y-top"
           nodeType="entry"
