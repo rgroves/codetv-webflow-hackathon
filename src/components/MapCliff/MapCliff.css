@@ -1,0 +1,17 @@
+.terrain-cliff {
+  --cliff: #6a5136;
+  --cliff-dark: #3f2f1d;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  height: 7%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--cliff) 0 1rem,
+    #7a603f 1rem 2rem
+  );
+  border-top: 6px solid var(--cliff-dark);
+  border-bottom: 6px solid rgba(255, 230, 150, 0.3);
+}

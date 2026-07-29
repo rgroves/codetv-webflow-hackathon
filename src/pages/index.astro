@@ -18,6 +18,7 @@ import cssLogo from "../assets/logos/css.svg";
 import astroLogo from "../assets/logos/astro.svg";
 import MapGrass from "../components/MapGrass/MapGrass.astro";
 import MapWater from "../components/MapWater/MapWater.astro";
+import MapCliff from "../components/MapCliff/MapCliff.astro";
 
 const eastPowerLogos = [
   { name: "GSAP", src: gsapLogo.src },
@@ -60,6 +61,7 @@ const westPowerLogos = [
       <MapPiece name="top">
         <MapGrass />
         <MapWater />
+        <MapCliff />
         <MapPath type="north-to-south" />
         <MapPath type="east-to-west" />
         <MapNode
