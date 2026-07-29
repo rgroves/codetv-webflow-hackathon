@@ -16,6 +16,7 @@ import html5Logo from "../assets/logos/html5.svg";
 import javascriptLogo from "../assets/logos/javascript.svg";
 import cssLogo from "../assets/logos/css.svg";
 import astroLogo from "../assets/logos/astro.svg";
+import MapGrass from "../components/MapGrass/MapGrass.astro";
 
 const eastPowerLogos = [
   { name: "GSAP", src: gsapLogo.src },
@@ -56,6 +57,7 @@ const westPowerLogos = [
         </MapPiece>
       </MapIntro>
       <MapPiece name="top">
+        <MapGrass />
         <MapPath type="north-to-south" />
         <MapPath type="east-to-west" />
         <MapNode
@@ -95,6 +97,7 @@ const westPowerLogos = [
         />
       </MapPiece>
       <MapPiece name="bottom" initiallyHidden={true}>
+        <MapGrass />
         <MapNode
           classMods="node-x-mid node-y-top"
           nodeType="entry"
@@ -103,6 +106,5 @@ const westPowerLogos = [
       </MapPiece>
       <MapDialog />
     </WorldMap>
-
   </body>
 </html>

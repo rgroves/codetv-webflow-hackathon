@@ -1,0 +1,24 @@
+.terrain-grass {
+  --grass: #68c454;
+  --grass-dark: #2f7d2d;
+
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 255, 255, 0.24),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 80% 15%,
+      rgba(255, 255, 255, 0.18),
+      transparent 14%
+    ),
+    linear-gradient(
+      180deg,
+      #8fe26b 0 22%,
+      var(--grass) 22% 72%,
+      #5db845 72% 100%
+    );
+}
