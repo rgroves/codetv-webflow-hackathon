@@ -291,6 +291,7 @@ async function transitionFromCurrentSeam(direction) {
   }
 
   state.isAnimating = true;
+  await shrinkCody();
   syncNodeState();
   updateCodyPose(direction, 1);
 
@@ -299,10 +300,11 @@ async function transitionFromCurrentSeam(direction) {
   state.currentNodeId = transition.targetNodeId;
   setActivePiece(transition.targetPieceId);
 
-  state.isAnimating = false;
   updateCodyPose(direction, 0);
   syncNodeState();
   setCodyAtNode(state.currentNodeId);
+  unshrinkCody();
+  state.isAnimating = false;
 }
 
 function getDirectionForMove(fromId, toId) {
@@ -337,6 +339,25 @@ function getSeamTransition(nodeId, fromNodeId) {
   return transition;
 }
 
+async function shrinkCody() {
+  // Shrink Cody McCodeface as if falling into the center of a node.
+  await gsap.to(cody, {
+    scale: 0,
+    transformOrigin: "50% 100%",
+    duration: 0.3,
+    ease: "power2.inOut",
+  });
+}
+
+async function unshrinkCody() {
+  // Re-bigify Cody McCodeface as if popping out of a node.
+  await gsap.to(cody, {
+    scale: 1,
+    duration: 0.3,
+    ease: "power2.inOut",
+  });
+}
+
 async function transitionAcrossSeam(fromNodeId, direction) {
   const transition = getSeamTransition(state.currentNodeId, fromNodeId);
 
@@ -344,11 +365,19 @@ async function transitionAcrossSeam(fromNodeId, direction) {
     return;
   }
 
+  // Move Cody McCodeface to the original target node before making the transition, to ensure the animation looks correct.
+  state.isAnimating = false;
+  updateCodyPose(direction, 0);
+  syncNodeState();
+  setCodyAtNode(state.currentNodeId);
+  shrinkCody();
+
   await scrollToPiece(transition.targetPieceId);
   state.currentNodeId = transition.targetNodeId;
   setActivePiece(transition.targetPieceId);
   setCodyAtNode(state.currentNodeId);
   updateCodyPose(direction, 1);
+  await unshrinkCody();
 }
 
 async function moveCodyTo(targetNodeId) {
