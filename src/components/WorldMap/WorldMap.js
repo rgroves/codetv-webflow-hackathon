@@ -36,6 +36,7 @@ if (!root) {
 }
 
 const mapDialog = root.querySelector("[data-map-dialog]");
+const bottomMapSection = root.querySelector('[data-map-piece="bottom"]')?.closest(".map-section");
 
 const cody = root.querySelector("#cody");
 
@@ -53,6 +54,11 @@ const pieceConfigs = [
   {
     id: "top",
     element: root.querySelector('[data-map-piece="top"]'),
+    nodes: {}
+  },
+  {
+    id: "bottom",
+    element: root.querySelector('[data-map-piece="bottom"]'),
     nodes: {}
   },
 ].reduce((acc, piece) => {
@@ -552,6 +558,7 @@ const triggerActionForNode = (nodeId) => {
         if (["code-power", "community-power"].every((power) => state.inventory.has(power))) {
           showMapDialog("Cody McCodeface says...", "I'm ready", "Let's head to the CodeTV studio!");
           state.inventory.add("EOL");
+          revealBottomMapPiece();
         } else {
           const powersNeeded = ["code-power", "community-power"].filter((power) => !state.inventory.has(power)).map((power) => power.replace(/(.+)-power$/, "the power of $1"));
           showMapDialog("Cody McCodeface says...", "I'm not ready yet.", `Help me find ${powersNeeded.join(" and ")} so that I can confidently make my way to the CodeTV studio.`);
@@ -564,6 +571,33 @@ const triggerActionForNode = (nodeId) => {
       break;
   }
 };
+
+function revealBottomMapPiece() {
+  if (!bottomMapSection) {
+    return;
+  }
+
+  nodeGraph["bottom:entry"] = {
+    pieceId: "bottom",
+    directionTargets: {},
+  };
+
+  seamTransitions["top:stop"] = {
+    targetNodeId: "bottom:entry",
+    targetPieceId: "bottom",
+    direction: "down",
+  };
+
+  seamTransitions["bottom:entry"] = {
+    targetNodeId: "top:stop",
+    targetPieceId: "top",
+    direction: "up",
+  };
+
+  bottomMapSection.hidden = false;
+  syncNodeState();
+  ScrollTrigger.refresh();
+}
 
 function showMapDialog(eyebrow, title, message) {
   window.dispatchEvent(new CustomEvent("map-dialog:show", {

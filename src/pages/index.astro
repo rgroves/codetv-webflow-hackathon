@@ -63,6 +63,13 @@ import MapDialog from "../components/MapDialog/MapDialog.astro";
           ariaLabel="Map top section, southmost node"
         />
       </MapPiece>
+      <MapPiece name="bottom" initiallyHidden={true}>
+        <MapNode
+          classMods="node-x-mid node-y-top"
+          nodeType="entry"
+          ariaLabel="Map bottom section, northmost node"
+        />
+      </MapPiece>
       <MapDialog />
     </WorldMap>
   </body>

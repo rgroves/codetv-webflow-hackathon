@@ -4,9 +4,10 @@ import "./MapPiece.css";
 interface Props {
   name: string;
   partial?: boolean;
+  initiallyHidden?: boolean;
 }
 
-const { name, partial = false }: Props = Astro.props;
+const { name, partial = false, initiallyHidden = false }: Props = Astro.props;
 ---
 
 <>
@@ -16,7 +17,7 @@ const { name, partial = false }: Props = Astro.props;
         <slot />
       </div>
     ) : (
-      <section class="map-section">
+      <section class="map-section" hidden={initiallyHidden}>
         <div class="map-piece" data-map-piece={name}>
           <div class="piece-frame">
             <slot />
