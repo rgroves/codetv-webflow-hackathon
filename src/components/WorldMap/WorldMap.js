@@ -107,7 +107,7 @@ const nodeGraph = {
   },
   "top:stop": {
     pieceId: "top",
-    directionTargets: { up: "top:junction"},
+    directionTargets: { up: "top:junction" },
   },
 };
 
@@ -136,6 +136,7 @@ const state = {
   handoffInFlight: false,
   wheelCooldownUntil: 0,
   scrollLockCleanup: null,
+  inventory: new Set(),
 };
 
 function setActivePiece(pieceId) {
@@ -416,6 +417,8 @@ async function moveCodyTo(targetNodeId) {
   updateCodyPose(direction, 0);
   syncNodeState();
   setCodyAtNode(state.currentNodeId);
+
+  triggerActionForNode(targetNodeId);
 }
 
 function onKeyDown(event) {
@@ -462,6 +465,38 @@ function onKeyDown(event) {
   event.preventDefault();
   moveCodyTo(targetNodeId);
 }
+
+const triggerActionForNode = (nodeId) => {
+  switch (nodeId) {
+    case "top:branch-left":
+      if (!state.inventory.has("code-power")) {
+        alert("You gained the power of code!");
+        state.inventory.add("code-power");
+      }
+      break;
+
+    case "top:branch-right":
+      if (!state.inventory.has("community-power")) {
+        alert("You gained the power of community!");
+        state.inventory.add("community-power");
+      }
+      break;
+
+    case "top:stop":
+      if (!state.inventory.has("EOL")) {
+        if (["code-power", "community-power"].every((power) => state.inventory.has(power))) {
+          alert("You have the power!!");
+          state.inventory.add("EOL");
+        }
+      }
+      break;
+
+    default:
+      // noop
+      break;
+  }
+};
+
 
 window.addEventListener("keydown", onKeyDown);
 
@@ -566,7 +601,7 @@ function onNodeClick(event) {
 
 pieceConfigs.forEach((piece) => {
   Object.values(piece.nodes).forEach((node) => {
-    console.log("addinglistiner",node);
+    console.log("addinglistiner", node);
     node.addEventListener("click", onNodeClick);
   });
 });
