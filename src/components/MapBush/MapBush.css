@@ -1,0 +1,58 @@
+.deco-bush {
+  --bush-dark: #2f7d2d;
+
+  position: absolute;
+  width: 6rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 5px solid var(--bush-dark);
+  background:
+    radial-gradient(circle at 35% 35%, #9dff88 0 20%, transparent 21%),
+    linear-gradient(180deg, #88dd72, #3f9b32);
+}
+
+.deco-bush::before,
+.deco-bush::after {
+  position: absolute;
+  bottom: -5px;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 5px solid var(--bush-dark);
+  background: linear-gradient(180deg, #8fe776, #43a439);
+  content: "";
+}
+
+.deco-bush::before {
+  left: -1rem;
+}
+
+.deco-bush::after {
+  right: -1rem;
+}
+
+.deco-bush-top-left {
+  top: 16%;
+  left: 18%;
+}
+
+.deco-bush-top-right {
+  top: 22%;
+  right: 16%;
+}
+
+.deco-bush-bottom {
+  bottom: 33%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.deco-bush-bottom-left {
+  bottom: 27%;
+  left: 18%;
+}
+
+.deco-bush-bottom-right {
+  bottom: 29%;
+  right: 18%;
+}
