@@ -535,12 +535,18 @@ function onKeyDown(event) {
   moveCodyTo(targetNodeId);
 }
 
+const collectPowerBundle = (powerId) => {
+  const bundle = document.getElementById(`${powerId}-bundle`);
+  bundle?.dispatchEvent(new Event("power-bundle:collect"));
+};
+
 const triggerActionForNode = (nodeId) => {
   switch (nodeId) {
     case "top:branch-left":
       if (!state.inventory.has("code-power")) {
         showMapDialog("Power Up", "Code Power", "You gained the power of code!");
         state.inventory.add("code-power");
+        collectPowerBundle("code-power");
         state.powerIcons.push('🧙', '✨', '⌨️', '🧑‍💻', '👨‍💻', '👩‍💻');
       }
       break;
@@ -549,6 +555,7 @@ const triggerActionForNode = (nodeId) => {
       if (!state.inventory.has("community-power")) {
         showMapDialog("Power Up", "Community Power", "You gained the power of community!");
         state.inventory.add("community-power");
+        collectPowerBundle("community-power");
         state.powerIcons.push('🧍‍♀️', '🧍‍♂️', '🧍', '🧡', '😆', '💪');
       }
       break;

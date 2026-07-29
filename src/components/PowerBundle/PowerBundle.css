@@ -1,0 +1,63 @@
+.power-bundle {
+  --power-logo-size: 5rem;
+  --power-orbit-radius: 7rem;
+  position: absolute;
+  z-index: 5;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.power-bundle-x-left {
+  left: 16%;
+}
+
+.power-bundle-x-mid {
+  left: 50%;
+}
+
+.power-bundle-x-right {
+  left: 84%;
+}
+
+.power-bundle-y-top {
+  top: 12%;
+}
+
+.power-bundle-y-mid {
+  top: 50%;
+}
+
+.power-bundle-y-bottom {
+  top: 87%;
+}
+
+.power-bundle__item {
+  position: absolute;
+  top: calc(var(--power-logo-size) / -2);
+  left: calc(var(--power-logo-size) / -2);
+  display: grid;
+  width: var(--power-logo-size);
+  height: var(--power-logo-size);
+  place-items: center;
+  transform: rotate(calc(var(--power-logo-index) * 120deg))
+    translateY(calc(var(--power-orbit-radius) * -1))
+    rotate(calc(var(--power-logo-index) * -120deg));
+  transform-origin: center;
+  will-change: transform;
+}
+
+.power-bundle__item img {
+  display: block;
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  user-select: none;
+}
+
+@media (max-width: 40rem) {
+  .power-bundle {
+    --power-logo-size: 4.6rem;
+    --power-orbit-radius: 6rem;
+  }
+}

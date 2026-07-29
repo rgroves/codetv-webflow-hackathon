@@ -1,0 +1,29 @@
+---
+import "./PowerBundle.css";
+
+const { id, classMods = "", logos = [] } = Astro.props;
+---
+
+<div
+  id={id}
+  class={`power-bundle ${classMods}`}
+  data-power-bundle
+  role="group"
+  aria-label="Power bundle"
+>
+  {
+    logos.map(({ name, src }, index) => (
+      <div
+        class="power-bundle__item"
+        data-power-logo={name.toLowerCase()}
+        style={`--power-logo-index: ${index}`}
+      >
+        <img src={src} alt={name} draggable="false" />
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  import "./PowerBundle.js";
+</script>

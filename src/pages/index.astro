@@ -8,6 +8,27 @@ import CodyMcCodeface from "../components/CodyMcCodeface/CodyMcCodeface.astro";
 import MapPiece from "../components/MapPiece/MapPiece.astro";
 import MapPath from "../components/MapPath/MapPath.astro";
 import MapDialog from "../components/MapDialog/MapDialog.astro";
+import PowerBundle from "../components/PowerBundle/PowerBundle.astro";
+import gsapLogo from "../assets/logos/gsap.svg";
+import webflowLogo from "../assets/logos/webflow.svg";
+import codeTvLogo from "../assets/logos/codetv.svg";
+import html5Logo from "../assets/logos/html5.svg";
+import javascriptLogo from "../assets/logos/javascript.svg";
+import cssLogo from "../assets/logos/css.svg";
+import astroLogo from "../assets/logos/astro.svg";
+
+const eastPowerLogos = [
+  { name: "GSAP", src: gsapLogo.src },
+  { name: "Webflow", src: webflowLogo.src },
+  { name: "CodeTV", src: codeTvLogo.src },
+];
+
+const westPowerLogos = [
+  { name: "HTML5", src: html5Logo.src },
+  { name: "JavaScript", src: javascriptLogo.src },
+  { name: "CSS", src: cssLogo.src },
+  { name: "Astro", src: astroLogo.src },
+];
 ---
 
 <html lang="en">
@@ -35,7 +56,7 @@ import MapDialog from "../components/MapDialog/MapDialog.astro";
         </MapPiece>
       </MapIntro>
       <MapPiece name="top">
-        <MapPath type="north-to-south"/>
+        <MapPath type="north-to-south" />
         <MapPath type="east-to-west" />
         <MapNode
           classMods="node-x-mid node-y-top"
@@ -52,10 +73,20 @@ import MapDialog from "../components/MapDialog/MapDialog.astro";
           nodeType="branch-left"
           ariaLabel="Map top section, west node"
         />
+        <PowerBundle
+          id="code-power-bundle"
+          classMods="power-bundle-x-left power-bundle-y-mid"
+          logos={westPowerLogos}
+        />
         <MapNode
           classMods="node-x-right node-y-mid"
           nodeType="branch-right"
           ariaLabel="Map top section, east node"
+        />
+        <PowerBundle
+          id="community-power-bundle"
+          classMods="power-bundle-x-right power-bundle-y-mid"
+          logos={eastPowerLogos}
         />
         <MapNode
           classMods="node-x-mid node-y-bottom"
@@ -72,5 +103,6 @@ import MapDialog from "../components/MapDialog/MapDialog.astro";
       </MapPiece>
       <MapDialog />
     </WorldMap>
+
   </body>
 </html>
