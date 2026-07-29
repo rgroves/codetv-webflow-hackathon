@@ -35,6 +35,8 @@ if (!root) {
   throw new Error("The world map root element is missing.");
 }
 
+const mapDialog = root.querySelector("[data-map-dialog]");
+
 const cody = root.querySelector("#cody");
 
 if (!cody) {
@@ -479,6 +481,10 @@ async function playMoveCodyAnimation(cody, targetPosition) {
 }
 
 function onKeyDown(event) {
+  if (mapDialog?.open) {
+    return;
+  }
+
   const keyMap = {
     ArrowUp: "up",
     w: "up",
@@ -527,7 +533,7 @@ const triggerActionForNode = (nodeId) => {
   switch (nodeId) {
     case "top:branch-left":
       if (!state.inventory.has("code-power")) {
-        alert("You gained the power of code!");
+        showMapDialog("Power Up", "Code Power", "You gained the power of code!");
         state.inventory.add("code-power");
         state.powerIcons.push('🧙', '✨', '⌨️', '🧑‍💻', '👨‍💻', '👩‍💻');
       }
@@ -535,7 +541,7 @@ const triggerActionForNode = (nodeId) => {
 
     case "top:branch-right":
       if (!state.inventory.has("community-power")) {
-        alert("You gained the power of community!");
+        showMapDialog("Power Up", "Community Power", "You gained the power of community!");
         state.inventory.add("community-power");
         state.powerIcons.push('🧍‍♀️', '🧍‍♂️', '🧍', '🧡', '😆', '💪');
       }
@@ -544,8 +550,11 @@ const triggerActionForNode = (nodeId) => {
     case "top:stop":
       if (!state.inventory.has("EOL")) {
         if (["code-power", "community-power"].every((power) => state.inventory.has(power))) {
-          alert("You have the power!!");
+          showMapDialog("Cody McCodeface says...", "I'm ready", "Let's head to the CodeTV studio!");
           state.inventory.add("EOL");
+        } else {
+          const powersNeeded = ["code-power", "community-power"].filter((power) => !state.inventory.has(power)).map((power) => power.replace(/(.+)-power$/, "the power of $1"));
+          showMapDialog("Cody McCodeface says...", "I'm not ready yet.", `Help me find ${powersNeeded.join(" and ")} so that I can confidently make my way to the CodeTV studio.`);
         }
       }
       break;
@@ -556,12 +565,18 @@ const triggerActionForNode = (nodeId) => {
   }
 };
 
+function showMapDialog(eyebrow, title, message) {
+  window.dispatchEvent(new CustomEvent("map-dialog:show", {
+    detail: { eyebrow, title, message },
+  }));
+}
+
 
 window.addEventListener("keydown", onKeyDown);
 
 
 function onWheel(event) {
-  if (state.isAnimating || state.handoffInFlight || event.deltaY === 0) {
+  if (mapDialog?.open || state.isAnimating || state.handoffInFlight || event.deltaY === 0) {
     return;
   }
 
