@@ -88,11 +88,15 @@ const nodeGraph = {
     pieceId: "home",
     directionTargets: {},
   },
+
   "top:entry": {
     pieceId: "top",
     directionTargets: { down: "top:junction" },
   },
-
+  "top:junction": {
+    pieceId: "top",
+    directionTargets: { up: "top:entry", left: "top:branch-left", right: "top:branch-right", down: "top:stop" },
+  },
   "top:branch-left": {
     pieceId: "top",
     directionTargets: { right: "top:junction" },
@@ -100,11 +104,6 @@ const nodeGraph = {
   "top:branch-right": {
     pieceId: "top",
     directionTargets: { left: "top:junction" },
-  },
-
-  "top:junction": {
-    pieceId: "top",
-    directionTargets: { up: "top:entry", left: "top:branch-left", right: "top:branch-right", down: "top:stop" },
   },
   "top:stop": {
     pieceId: "top",
