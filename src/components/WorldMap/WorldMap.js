@@ -137,6 +137,7 @@ const state = {
   wheelCooldownUntil: 0,
   scrollLockCleanup: null,
   inventory: new Set(),
+  powerIcons: [],
 };
 
 function setActivePiece(pieceId) {
@@ -402,12 +403,7 @@ async function moveCodyTo(targetNodeId) {
   syncNodeState();
   updateCodyPose(direction, 1);
 
-  await gsap.to(cody, {
-    left: targetPosition.x,
-    top: targetPosition.y,
-    duration: 0.45,
-    ease: "power2.inOut",
-  });
+  await playMoveCodyAnimation(cody, targetPosition);
 
   state.currentNodeId = targetNodeId;
   setActivePiece(nodeGraph[targetNodeId].pieceId);
@@ -419,6 +415,67 @@ async function moveCodyTo(targetNodeId) {
   setCodyAtNode(state.currentNodeId);
 
   triggerActionForNode(targetNodeId);
+}
+
+async function playMoveCodyAnimation(cody, targetPosition) {
+  const trailEmojis = state.powerIcons;
+
+  let trailCount = 0;
+
+  const createTrailEmoji = () => {
+    const emoji = document.createElement("span");
+    const codyRect = cody.getBoundingClientRect();
+    const randIdx = Math.floor(Math.random() * trailEmojis.length);
+
+    emoji.textContent = trailEmojis[randIdx];
+    document.body.appendChild(emoji);
+
+    gsap.set(emoji, {
+      position: "absolute",
+      left: codyRect.left + codyRect.width / 2 + window.scrollX,
+      top: codyRect.top + codyRect.height / 2 + window.scrollY,
+      zIndex: 6,
+      fontSize: "1.25rem",
+      pointerEvents: "none",
+      xPercent: -50,
+      yPercent: -50,
+      scale: 1,
+    });
+
+    gsap.to(emoji, {
+      x: gsap.utils.random(-150, 150),
+      y: gsap.utils.random(-150, 150),
+      rotation: gsap.utils.random(-25, 25),
+      scale: Math.random() * 2 + 2, // random scale between 1.5 and 3
+      opacity: 1,
+      duration: 0.9,
+      ease: "power1.out",
+      onComplete: () => emoji.remove(),
+    });
+
+    trailCount += 1;
+  };
+
+  const updateTrail = () => {
+    if (trailEmojis.length === 0) {
+      return;
+    }
+
+    const expectedTrailCount = Math.floor(tl.progress() * 10);
+
+    while (trailCount < expectedTrailCount) {
+      createTrailEmoji();
+    }
+  };
+
+  const tl = gsap.timeline({ onUpdate: updateTrail });
+
+  await tl.to(cody, {
+    left: targetPosition.x,
+    top: targetPosition.y,
+    duration: 0.45,
+    ease: "power2.inOut",
+  });
 }
 
 function onKeyDown(event) {
@@ -472,6 +529,7 @@ const triggerActionForNode = (nodeId) => {
       if (!state.inventory.has("code-power")) {
         alert("You gained the power of code!");
         state.inventory.add("code-power");
+        state.powerIcons.push('🧙', '✨', '⌨️', '🧑‍💻', '👨‍💻', '👩‍💻');
       }
       break;
 
@@ -479,6 +537,7 @@ const triggerActionForNode = (nodeId) => {
       if (!state.inventory.has("community-power")) {
         alert("You gained the power of community!");
         state.inventory.add("community-power");
+        state.powerIcons.push('🧍‍♀️', '🧍‍♂️', '🧍', '🧡', '😆', '💪');
       }
       break;
 
