@@ -145,7 +145,8 @@ const state = {
   wheelCooldownUntil: 0,
   scrollLockCleanup: null,
   inventory: new Set(),
-  powerIcons: [],
+  powerTrailItems: [],
+  powerTrailCursor: 0,
 };
 
 function setActivePiece(pieceId) {
@@ -426,31 +427,42 @@ async function moveCodyTo(targetNodeId) {
 }
 
 async function playMoveCodyAnimation(cody, targetPosition) {
-  const trailEmojis = state.powerIcons;
+  const trailItems = state.powerTrailItems;
 
   let trailCount = 0;
 
-  const createTrailEmoji = () => {
-    const emoji = document.createElement("span");
+  const createTrailItem = () => {
     const codyRect = cody.getBoundingClientRect();
-    const randIdx = Math.floor(Math.random() * trailEmojis.length);
+    const trailItem = trailItems[state.powerTrailCursor % trailItems.length];
+    const element = document.createElement(trailItem.type === "logo" ? "img" : "span");
 
-    emoji.textContent = trailEmojis[randIdx];
-    document.body.appendChild(emoji);
+    state.powerTrailCursor += 1;
 
-    gsap.set(emoji, {
+    if (trailItem.type === "logo") {
+      element.src = trailItem.src;
+      element.alt = "";
+      element.setAttribute("aria-hidden", "true");
+      element.draggable = false;
+    } else {
+      element.textContent = trailItem.value;
+    }
+
+    document.body.appendChild(element);
+
+    gsap.set(element, {
       position: "absolute",
       left: codyRect.left + codyRect.width / 2 + window.scrollX,
       top: codyRect.top + codyRect.height / 2 + window.scrollY,
       zIndex: 6,
       fontSize: "1.25rem",
+      ...getTrailLogoStyle(trailItem),
       pointerEvents: "none",
       xPercent: -50,
       yPercent: -50,
       scale: 1,
     });
 
-    gsap.to(emoji, {
+    gsap.to(element, {
       x: gsap.utils.random(-150, 150),
       y: gsap.utils.random(-150, 150),
       rotation: gsap.utils.random(-25, 25),
@@ -458,21 +470,21 @@ async function playMoveCodyAnimation(cody, targetPosition) {
       opacity: 1,
       duration: 0.9,
       ease: "power1.out",
-      onComplete: () => emoji.remove(),
+      onComplete: () => element.remove(),
     });
 
     trailCount += 1;
   };
 
   const updateTrail = () => {
-    if (trailEmojis.length === 0) {
+    if (trailItems.length === 0) {
       return;
     }
 
-    const expectedTrailCount = Math.floor(tl.progress() * 10);
+    const expectedTrailCount = Math.floor(tl.progress() * 20);
 
     while (trailCount < expectedTrailCount) {
-      createTrailEmoji();
+      createTrailItem();
     }
   };
 
@@ -484,6 +496,18 @@ async function playMoveCodyAnimation(cody, targetPosition) {
     duration: 0.45,
     ease: "power2.inOut",
   });
+}
+
+function getTrailLogoStyle(trailItem) {
+  if (trailItem.type !== "logo") {
+    return {};
+  }
+
+  return {
+    width: "1.6rem",
+    height: "1.6rem",
+    objectFit: "contain",
+  };
 }
 
 function onKeyDown(event) {
@@ -540,24 +564,48 @@ const collectPowerBundle = (powerId) => {
   bundle?.dispatchEvent(new Event("power-bundle:collect"));
 };
 
+const getPowerBundleLogoTrailItems = (powerId) => {
+  const bundle = document.getElementById(`${powerId}-bundle`);
+
+  if (!bundle) {
+    return [];
+  }
+
+  return Array.from(bundle.querySelectorAll("[data-power-logo] img"))
+    .map((logo) => logo.currentSrc || logo.src)
+    .filter(Boolean)
+    .map((src) => ({ type: "logo", src }));
+};
+
+const addPowerTrailItems = (powerId, emojis) => {
+  state.powerTrailItems.push(
+    ...emojis.map((value) => ({ type: "emoji", value })),
+    ...getPowerBundleLogoTrailItems(powerId),
+  );
+};
+
+const collectCodePower = () => {
+  showMapDialog("Power Up", "Code Power", "You gained the power of code!");
+  state.inventory.add("code-power");
+  addPowerTrailItems("code-power", ['🧙', '✨', '⌨️', '🧑‍💻']);
+  collectPowerBundle("code-power");
+};
+
+const collectCommunityPower = () => {
+  showMapDialog("Power Up", "Community Power", "You gained the power of community!");
+  state.inventory.add("community-power");
+  addPowerTrailItems("community-power", ['🧍', '🧡', '😆', '💪']);
+  collectPowerBundle("community-power");
+};
+
 const triggerActionForNode = (nodeId) => {
   switch (nodeId) {
     case "top:branch-left":
-      if (!state.inventory.has("code-power")) {
-        showMapDialog("Power Up", "Code Power", "You gained the power of code!");
-        state.inventory.add("code-power");
-        collectPowerBundle("code-power");
-        state.powerIcons.push('🧙', '✨', '⌨️', '🧑‍💻', '👨‍💻', '👩‍💻');
-      }
+      if (!state.inventory.has("code-power")) collectCodePower();
       break;
 
     case "top:branch-right":
-      if (!state.inventory.has("community-power")) {
-        showMapDialog("Power Up", "Community Power", "You gained the power of community!");
-        state.inventory.add("community-power");
-        collectPowerBundle("community-power");
-        state.powerIcons.push('🧍‍♀️', '🧍‍♂️', '🧍', '🧡', '😆', '💪');
-      }
+      if (!state.inventory.has("community-power")) collectCommunityPower();
       break;
 
     case "top:stop":
