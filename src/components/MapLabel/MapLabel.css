@@ -1,0 +1,21 @@
+.path-label {
+  position: absolute;
+}
+
+.path-label {
+  z-index: 5;
+  padding: 0.45rem 0.7rem;
+  border: 4px solid rgba(18, 49, 89, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.path-label-studio {
+  top: unset;
+  bottom: 4%;
+  left: calc(50% - 12ch);
+}
