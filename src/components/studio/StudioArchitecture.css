@@ -1,0 +1,61 @@
+.studio-architecture {
+  position: absolute;
+  z-index: 4;
+  border-color: var(--studio-ink-soft);
+  border-style: solid;
+  background: var(--studio-wall);
+}
+
+.studio-architecture::before {
+  position: absolute;
+  background: var(--studio-wall-light);
+  content: "";
+}
+
+.studio-architecture--top-wall {
+  inset: 0 0 auto;
+  height: 11.4%;
+  border-width: 0 0 clamp(3px, 0.5vw, 6px);
+  box-shadow: inset 0 -10px 0 var(--studio-wall-dark);
+}
+
+.studio-architecture--top-wall::before {
+  inset: 8px 8px auto;
+  height: 10px;
+}
+
+.studio-architecture--left-wall {
+  inset: 0 auto 0 0;
+  width: 8.3%;
+  border-width: 0 clamp(3px, 0.5vw, 6px) 0 0;
+  box-shadow: inset -10px 0 0 var(--studio-wall-dark);
+}
+
+.studio-architecture--left-wall::before {
+  inset: 8px auto 8px 8px;
+  width: 10px;
+}
+
+.studio-architecture--right-wall {
+  inset: 0 0 0 auto;
+  width: 8.3%;
+  border-width: 0 0 0 clamp(3px, 0.5vw, 6px);
+  box-shadow: inset 10px 0 0 var(--studio-wall-dark);
+}
+
+.studio-architecture--right-wall::before {
+  inset: 8px 8px 8px auto;
+  width: 10px;
+}
+
+.studio-architecture--bottom-wall {
+  inset: auto 0 0;
+  height: 9.5%;
+  border-width: clamp(3px, 0.5vw, 6px) 0 0;
+  box-shadow: inset 0 10px 0 var(--studio-wall-dark);
+}
+
+.studio-architecture--bottom-wall::before {
+  inset: auto 8px 8px;
+  height: 10px;
+}

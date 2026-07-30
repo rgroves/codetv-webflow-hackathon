@@ -1,0 +1,22 @@
+---
+import "./StudioSofa.css";
+
+interface Props {
+  variant: "green" | "orange";
+  label: string;
+}
+
+const { variant, label }: Props = Astro.props;
+---
+
+<section
+  class={`studio-sofa studio-sofa--${variant}`}
+  aria-label={label}
+>
+  <div class="studio-sofa__back"></div>
+  <div class="studio-sofa__seat studio-sofa__seat--one"></div>
+  <div class="studio-sofa__seat studio-sofa__seat--two"></div>
+  <div class="studio-sofa__arm studio-sofa__arm--start"></div>
+  <div class="studio-sofa__arm studio-sofa__arm--end"></div>
+  {variant === "orange" && <div class="studio-throw-pillow" aria-hidden="true"></div>}
+</section>

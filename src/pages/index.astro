@@ -21,6 +21,14 @@ import MapWater from "../components/MapWater/MapWater.astro";
 import MapCliff from "../components/MapCliff/MapCliff.astro";
 import MapBush from "../components/MapBush/MapBush.astro";
 import MapLabel from "../components/MapLabel/MapLabel.astro";
+import StudioRoom from "../components/studio/StudioRoom.astro";
+import StudioArchitecture from "../components/studio/StudioArchitecture.astro";
+import StudioWindow from "../components/studio/StudioWindow.astro";
+import StudioCurtainedDoor from "../components/studio/StudioCurtainedDoor.astro";
+import StudioSofa from "../components/studio/StudioSofa.astro";
+import StudioRug from "../components/studio/StudioRug.astro";
+import StudioCoffeeTable from "../components/studio/StudioCoffeeTable.astro";
+import StudioSign from "../components/studio/StudioSign.astro";
 
 const eastPowerLogos = [
   { name: "GSAP", src: gsapLogo.src },
@@ -106,11 +114,24 @@ const westPowerLogos = [
         />
       </MapPiece>
       <MapPiece name="bottom" initiallyHidden={true}>
-        <MapNode
-          classMods="node-x-mid node-y-top"
-          nodeType="entry"
-          ariaLabel="Map bottom section, northmost node"
-        />
+        <StudioRoom>
+          <StudioArchitecture wall="top" />
+          <StudioArchitecture wall="left" />
+          <StudioArchitecture wall="right" />
+          <StudioArchitecture wall="bottom" />
+          <StudioWindow />
+          <StudioCurtainedDoor />
+          <StudioSign />
+          <StudioSofa variant="green" label="Deep green sofa" />
+          <StudioSofa variant="orange" label="Bright orange sofa" />
+          <StudioRug />
+          <StudioCoffeeTable />
+          <MapNode
+            classMods="node-x-mid node-y-top"
+            nodeType="entry"
+            ariaLabel="CodeTV Studio, northmost node"
+          />
+        </StudioRoom>
       </MapPiece>
       <MapDialog />
     </WorldMap>

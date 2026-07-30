@@ -1,0 +1,35 @@
+.studio-sign {
+  position: absolute;
+  z-index: 16;
+  top: 2.2%;
+  right: 11.2%;
+  display: grid;
+  width: 20%;
+  height: 9.2%;
+  place-items: center;
+  border: clamp(2px, 0.35vw, 4px) solid var(--studio-ink);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0 18%, transparent 18%),
+    var(--studio-screen);
+  box-shadow:
+    inset 0 0 0 clamp(3px, 0.42vw, 5px) #303b37,
+    5px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+.studio-sign img {
+  display: block;
+  width: 74%;
+  height: auto;
+}
+
+.studio-sign span {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  color: #fff;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}

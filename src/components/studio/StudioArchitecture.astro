@@ -1,0 +1,15 @@
+---
+import "./StudioArchitecture.css";
+
+interface Props {
+  wall: "top" | "left" | "right" | "bottom";
+}
+
+const { wall }: Props = Astro.props;
+---
+
+<div
+  class={`studio-architecture studio-architecture--${wall}-wall`}
+  aria-hidden="true"
+>
+</div>

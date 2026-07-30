@@ -1,0 +1,32 @@
+.studio-rug {
+  position: absolute;
+  z-index: 12;
+  left: 36.3%;
+  bottom: 13.3%;
+  width: 35.3%;
+  height: 26.8%;
+  border: clamp(3px, 0.42vw, 5px) solid var(--studio-ink);
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--studio-rug-cream) 0 11%,
+    var(--studio-rug-pink) 11% 18%,
+    var(--studio-rug) 18% 31%
+  );
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.34);
+}
+
+.studio-rug::after {
+  position: absolute;
+  inset: 5%;
+  border: clamp(2px, 0.35vw, 4px) dashed rgba(89, 55, 49, 0.42);
+  border-radius: 999px;
+  content: "";
+}
+
+.studio-rug__border {
+  position: absolute;
+  inset: 9%;
+  border: clamp(2px, 0.35vw, 4px) solid rgba(89, 55, 49, 0.24);
+  border-radius: 999px;
+}

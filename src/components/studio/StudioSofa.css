@@ -1,0 +1,132 @@
+.studio-sofa {
+  position: absolute;
+  z-index: 25;
+  border: clamp(3px, 0.42vw, 5px) solid var(--studio-ink);
+  filter: drop-shadow(8px 8px 0 rgba(8, 10, 8, 0.48));
+}
+
+.studio-sofa__back,
+.studio-sofa__seat,
+.studio-sofa__arm {
+  position: absolute;
+  border: clamp(2px, 0.35vw, 4px) solid var(--studio-ink);
+}
+
+.studio-sofa--green {
+  top: 32%;
+  left: 8.8%;
+  width: 12.5%;
+  height: 48%;
+  background: var(--studio-green-dark);
+}
+
+.studio-sofa--green .studio-sofa__back {
+  top: 2.5%;
+  bottom: 2.5%;
+  left: 2.5%;
+  width: 25%;
+  background: var(--studio-green);
+  box-shadow: inset 8px 0 0 var(--studio-green-light);
+}
+
+.studio-sofa--green .studio-sofa__seat {
+  right: 4%;
+  width: 63%;
+  background: var(--studio-green);
+  box-shadow: inset 7px 7px 0 var(--studio-green-light);
+}
+
+.studio-sofa--green .studio-sofa__seat--one {
+  top: 8%;
+  height: 40%;
+}
+
+.studio-sofa--green .studio-sofa__seat--two {
+  bottom: 8%;
+  height: 40%;
+}
+
+.studio-sofa--green .studio-sofa__arm {
+  right: 1.5%;
+  left: 28%;
+  height: 13%;
+  background: var(--studio-green-dark);
+  box-shadow: inset 5px 5px 0 var(--studio-green-light);
+}
+
+.studio-sofa--green .studio-sofa__arm--start {
+  top: -2.5%;
+}
+
+.studio-sofa--green .studio-sofa__arm--end {
+  bottom: -2.5%;
+}
+
+.studio-sofa--orange {
+  top: 21.8%;
+  left: 44.5%;
+  width: 37.5%;
+  height: 20.5%;
+  background: var(--studio-orange-dark);
+}
+
+.studio-sofa--orange .studio-sofa__back {
+  top: 2%;
+  right: 2%;
+  left: 2%;
+  height: 25%;
+  background: var(--studio-orange);
+  box-shadow: inset 0 7px 0 var(--studio-orange-light);
+}
+
+.studio-sofa--orange .studio-sofa__seat {
+  bottom: 7%;
+  width: 42.5%;
+  height: 61%;
+  background: var(--studio-orange);
+  box-shadow: inset 7px 7px 0 var(--studio-orange-light);
+}
+
+.studio-sofa--orange .studio-sofa__seat--one {
+  left: 7.5%;
+}
+
+.studio-sofa--orange .studio-sofa__seat--two {
+  right: 7.5%;
+}
+
+.studio-sofa--orange .studio-sofa__arm {
+  bottom: 2.5%;
+  width: 11%;
+  height: 73%;
+  background: var(--studio-orange-dark);
+  box-shadow: inset 6px 6px 0 var(--studio-orange-light);
+}
+
+.studio-sofa--orange .studio-sofa__arm--start {
+  left: -2.2%;
+}
+
+.studio-sofa--orange .studio-sofa__arm--end {
+  right: -2.2%;
+}
+
+.studio-throw-pillow {
+  position: absolute;
+  z-index: 4;
+  right: 13.5%;
+  bottom: 16%;
+  width: 17%;
+  aspect-ratio: 1;
+  transform: rotate(8deg);
+  border: clamp(2px, 0.35vw, 4px) solid var(--studio-ink);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 42%,
+      rgba(255, 255, 255, 0.08) 42% 50%,
+      transparent 50%
+    ),
+    #4b3c22;
+  box-shadow: inset 6px 6px 0 #68532d;
+}
