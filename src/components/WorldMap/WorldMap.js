@@ -5,6 +5,12 @@ const SCROLL_WHEEL_COOLDOWN_MS = 300;
 const SWIPE_MIN_DISTANCE_PX = 40;
 const SWIPE_SCROLL_LOCK_DISTANCE_PX = 8;
 const STUDIO_WORD_CLOUD_DURATION_SECONDS = 8;
+const SEAM_FLIP_SETTINGS = {
+  up: { rotationX: -88, rotationY: 0, transformOrigin: "50% 0%" },
+  down: { rotationX: 88, rotationY: 0, transformOrigin: "50% 100%" },
+  left: { rotationX: 0, rotationY: 88, transformOrigin: "0% 50%" },
+  right: { rotationX: 0, rotationY: -88, transformOrigin: "100% 50%" },
+};
 
 const studioNodeMessages = {
   "bottom:entry": [
@@ -437,32 +443,58 @@ function dismissStudioWordCloud() {
   window.dispatchEvent(new Event("studio-word-cloud:dismiss"));
 }
 
-function scrollToPiece(pieceId) {
+function scrollToPiece(pieceId, direction) {
   const piece = pieceMap.get(pieceId);
 
   if (!piece) {
     return Promise.resolve();
   }
 
+  const flipTarget = piece.element.closest(".map-section") ?? piece.element;
+  const flipSettings = SEAM_FLIP_SETTINGS[direction];
+  const targetScrollY = Math.max(
+    0,
+    piece.element.getBoundingClientRect().top + window.scrollY - 12,
+  );
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const flipFromVars = flipSettings && !reduceMotion
+    ? { ...flipSettings, transformPerspective: 1200, willChange: "transform" }
+    : null;
+  const flipToVars = {
+    rotationX: 0,
+    rotationY: 0,
+    duration: 0.9,
+    ease: "power2.inOut",
+  };
+
   state.handoffInFlight = true;
   lockNativeScroll();
 
   return new Promise((resolve) => {
-    gsap.to(window, {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+
+      settled = true;
+      gsap.set(flipTarget, { clearProps: "transform,transformOrigin,willChange" });
+      state.handoffInFlight = false;
+      unlockNativeScroll();
+      resolve();
+    };
+    const timeline = gsap.timeline({
+      onComplete: finish,
+      onInterrupt: finish,
+    });
+
+    if (flipFromVars) {
+      timeline.fromTo(flipTarget, flipFromVars, flipToVars, 0);
+    }
+
+    timeline.to(window, {
       duration: 0.9,
       ease: "power2.inOut",
-      scrollTo: { y: piece.element, offsetY: 12 },
-      onComplete: () => {
-        state.handoffInFlight = false;
-        unlockNativeScroll();
-        resolve();
-      },
-      onInterrupt: () => {
-        state.handoffInFlight = false;
-        unlockNativeScroll();
-        resolve();
-      },
-    });
+      scrollTo: { y: targetScrollY },
+    }, 0);
   });
 }
 
@@ -485,7 +517,7 @@ async function transitionFromCurrentSeam(direction) {
   updateCodyPose(direction, 1);
 
   console.log(`Transitioning from node ${state.currentNodeId} to node ${transition.targetNodeId} across seam in direction ${direction}.`);
-  await scrollToPiece(transition.targetPieceId);
+  await scrollToPiece(transition.targetPieceId, direction);
   state.currentNodeId = transition.targetNodeId;
   setActivePiece(transition.targetPieceId);
 
