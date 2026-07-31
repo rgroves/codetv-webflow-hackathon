@@ -10,7 +10,11 @@ interface Props {
 const { name, src, position }: Props = Astro.props;
 ---
 
-<figure class={`studio-avatar studio-avatar--${position}`} aria-label={name}>
+<figure
+  class={`studio-avatar studio-avatar--${position}`}
+  data-studio-avatar={position}
+  aria-label={name}
+>
   <div class="studio-avatar__shadow" aria-hidden="true"></div>
   <img class="studio-avatar__image" src={src} alt="" draggable="false" />
   <figcaption class="studio-avatar__label">{name}</figcaption>

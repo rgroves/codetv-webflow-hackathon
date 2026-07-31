@@ -30,6 +30,8 @@ import StudioRug from "../components/studio/StudioRug.astro";
 import StudioCoffeeTable from "../components/studio/StudioCoffeeTable.astro";
 import StudioSign from "../components/studio/StudioSign.astro";
 import StudioAvatar from "../components/studio/StudioAvatar.astro";
+import StudioWordCloud from "../components/studio/StudioWordCloud.astro";
+import StudioKonami from "../components/studio/StudioKonami.astro";
 
 const eastPowerLogos = [
   { name: "GSAP", src: gsapLogo.src },
@@ -144,24 +146,50 @@ const westPowerLogos = [
             nodeType="west"
             ariaLabel="CodeTV Studio, Team Keyframers node"
           />
-          <p class="studio-node-label studio-node-label--west">Team Keyframers</p>
-          <StudioAvatar name="David" src="/t1-keyframers-david.png" position="david" />
-          <StudioAvatar name="Steven" src="/t1-keyframers-steven.png" position="steven" />
+          <p class="studio-node-label studio-node-label--west">
+            Team Keyframers
+          </p>
+          <StudioAvatar
+            name="David"
+            src="/t1-keyframers-david.png"
+            position="david"
+          />
+          <StudioAvatar
+            name="Steven"
+            src="/t1-keyframers-steven.png"
+            position="steven"
+          />
           <MapNode
             classMods="studio-node studio-node--east"
             nodeType="east"
             ariaLabel="CodeTV Studio, Team Osmo node"
           />
           <p class="studio-node-label studio-node-label--east">Team Osmo</p>
-          <StudioAvatar name="Ilja" src="/t2-osmo-ilja-v-art.png" position="ilja" />
-          <StudioAvatar name="Dennis" src="/t2-osmo-dennis.png" position="dennis" />
+          <StudioAvatar
+            name="Ilja"
+            src="/t2-osmo-ilja-v-art.png"
+            position="ilja"
+          />
+          <StudioAvatar
+            name="Dennis"
+            src="/t2-osmo-dennis.png"
+            position="dennis"
+          />
           <MapNode
             classMods="node-x-mid studio-node studio-node--south"
             nodeType="south"
-            ariaLabel="CodeTV Studio, The U.S. Mint and Treasury node"
+            ariaLabel="CodeTV Studio, Team U.S. Mint and Treasury node"
           />
-          <p class="studio-node-label studio-node-label--south">The U.S. Mint &amp; Treasury</p>
-          <StudioAvatar name="Henry" src="/t3-ustandm-henry.png" position="henry" />
+          <p class="studio-node-label studio-node-label--south">
+            Team U.S. Mint &amp; Treasury
+          </p>
+          <StudioAvatar
+            name="Henry"
+            src="/t3-ustandm-henry.png"
+            position="henry"
+          />
+          <StudioWordCloud />
+          <StudioKonami />
         </StudioRoom>
       </MapPiece>
       <MapDialog />

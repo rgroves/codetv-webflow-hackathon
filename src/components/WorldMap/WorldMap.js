@@ -2,6 +2,68 @@ import { gsap, ScrollTrigger } from "../../lib/gsap.js";
 
 // Cooldown period in milliseconds to prevent rapid scroll events.
 const SCROLL_WHEEL_COOLDOWN_MS = 300;
+const STUDIO_WORD_CLOUD_DURATION_SECONDS = 8;
+
+const studioNodeMessages = {
+  "bottom:entry": [
+    {
+      speaker: "Jason",
+      message: "What would you build if you had 30 minutes to plan and 4 hours to build?",
+    },
+    {
+      speaker: "Jason",
+      message: "If you want to see us make more TV for developers, head to codetv.dev to learn more details and join up!",
+    },
+  ],
+  "bottom:mid": [
+    {
+      speaker: "Cassie",
+      message: "Animate pretty much anything on the web with GSAP!",
+    },
+    {
+      speaker: "Cassie",
+      message: "I can't believe everything that people put together. Did you watch the episode?",
+    },
+  ],
+  "bottom:south": [
+    {
+      speaker: "Henry",
+      message: "The soul business is booming!",
+    },
+    {
+      speaker: "Henry",
+      message: "Is your soul on the blockchain?",
+    },
+  ],
+  "bottom:east": [
+    {
+      speaker: "Ilja",
+      message: "No problem! It's just a couple of div blocks.",
+    },
+    {
+      speaker: "Dennis",
+      message: "Three types of animation, too much? Nah, it's a nice challenge.",
+    },
+  ],
+  "bottom:west": [
+    {
+      speaker: "David",
+      message: "If you're going to launch in 4.5 hours, you better dress the part.",
+    },
+    {
+      speaker: "Steven",
+      message: "Crash the lander. Crash the world... Don't crash the lander!",
+    },
+  ],
+};
+
+const studioNodeAvatars = {
+  "bottom:entry": ["jason"],
+  "bottom:mid": ["cassie"],
+  "bottom:south": ["henry"],
+  "bottom:east": ["ilja", "dennis"],
+  "bottom:west": ["david", "steven"],
+};
 
 /**
  * === Concepts ===
@@ -147,6 +209,9 @@ const state = {
   inventory: new Set(),
   powerTrailItems: [],
   powerTrailCursor: 0,
+  studioNodeVisits: new Map(),
+  departedStudioNodes: new Set(),
+  studioComplete: false,
 };
 
 function setActivePiece(pieceId) {
@@ -292,7 +357,7 @@ function scrollToPiece(pieceId) {
 }
 
 async function transitionFromCurrentSeam(direction) {
-  if (state.isAnimating || state.handoffInFlight) {
+  if (state.studioComplete || state.isAnimating || state.handoffInFlight) {
     return;
   }
 
@@ -318,6 +383,7 @@ async function transitionFromCurrentSeam(direction) {
   setCodyAtNode(state.currentNodeId);
   unshrinkCody();
   state.isAnimating = false;
+  triggerActionForNode(state.currentNodeId);
 }
 
 function getDirectionForMove(fromId, toId) {
@@ -394,7 +460,7 @@ async function transitionAcrossSeam(fromNodeId, direction) {
 }
 
 async function moveCodyTo(targetNodeId) {
-  if (state.isAnimating || state.handoffInFlight || targetNodeId === state.currentNodeId) {
+  if (state.studioComplete || state.isAnimating || state.handoffInFlight || targetNodeId === state.currentNodeId) {
     return;
   }
 
@@ -426,7 +492,7 @@ async function moveCodyTo(targetNodeId) {
   syncNodeState();
   setCodyAtNode(state.currentNodeId);
 
-  triggerActionForNode(targetNodeId);
+  triggerActionForNode(state.currentNodeId);
 }
 
 async function playMoveCodyAnimation(cody, targetPosition) {
@@ -590,18 +656,204 @@ const addPowerTrailItems = (powerId, emojis) => {
 const collectCodePower = () => {
   showMapDialog("Power Up", "Code Power", "You gained the power of code!");
   state.inventory.add("code-power");
-  addPowerTrailItems("code-power", ['🧙', '✨', '⌨️', '🧑‍💻']);
+  addPowerTrailItems("code-power", ['🧙', '✨', '🧑‍💻']);
   collectPowerBundle("code-power");
 };
 
 const collectCommunityPower = () => {
   showMapDialog("Power Up", "Community Power", "You gained the power of community!");
   state.inventory.add("community-power");
-  addPowerTrailItems("community-power", ['🧍', '🧡', '😆', '💪']);
+  addPowerTrailItems("community-power", ['🧡', '😆', '💪']);
   collectPowerBundle("community-power");
 };
 
+const triggerStudioWordCloud = (nodeId) => {
+  const messages = studioNodeMessages[nodeId];
+
+  if (!messages) {
+    return;
+  }
+
+  const visitCount = state.studioNodeVisits.get(nodeId) ?? 0;
+  const wordCloud = messages[visitCount];
+
+  state.studioNodeVisits.set(nodeId, visitCount + 1);
+
+  if (!wordCloud) {
+    return;
+  }
+
+  window.dispatchEvent(new CustomEvent("studio-word-cloud:show", {
+    detail: {
+      ...wordCloud,
+      nodeId,
+      isFinalVisit: visitCount === messages.length - 1,
+      duration: STUDIO_WORD_CLOUD_DURATION_SECONDS,
+    },
+  }));
+};
+
+const exitStudioAvatars = (nodeId) => {
+  const avatarIds = studioNodeAvatars[nodeId];
+  const studioDoor = root.querySelector(".studio-curtained-door");
+
+  if (!avatarIds || !studioDoor || state.departedStudioNodes.has(nodeId)) {
+    return;
+  }
+
+  const avatars = avatarIds
+    .map((avatarId) => root.querySelector(`[data-studio-avatar="${avatarId}"]`))
+    .filter(Boolean);
+
+  if (avatars.length === 0) {
+    return;
+  }
+
+  state.departedStudioNodes.add(nodeId);
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const doorRect = studioDoor.getBoundingClientRect();
+  const doorTarget = {
+    x: doorRect.left + doorRect.width / 2,
+    y: doorRect.top + doorRect.height * 0.7,
+  };
+  const exitTimeline = gsap.timeline();
+
+  avatars.forEach((avatar, index) => {
+    const avatarRect = avatar.getBoundingClientRect();
+    const avatarCenter = {
+      x: avatarRect.left + avatarRect.width / 2,
+      y: avatarRect.top + avatarRect.height / 2,
+    };
+    const startAt = reduceMotion ? 0 : index * 0.18;
+    const travelDuration = reduceMotion ? 0.2 : 1;
+    const label = avatar.querySelector(".studio-avatar__label");
+    const image = avatar.querySelector(".studio-avatar__image");
+    const shadow = avatar.querySelector(".studio-avatar__shadow");
+
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.dataset.exiting = "true";
+
+    if (label) {
+      exitTimeline.to(label, { opacity: 0, duration: reduceMotion ? 0.01 : 0.12 }, startAt);
+    }
+
+    if (shadow) {
+      exitTimeline.to(shadow, { opacity: 0, duration: travelDuration * 0.7 }, startAt);
+    }
+
+    if (image && !reduceMotion) {
+      exitTimeline.to(image, {
+        y: -4,
+        duration: 0.1,
+        repeat: 7,
+        yoyo: true,
+        ease: "steps(2)",
+      }, startAt);
+    }
+
+    exitTimeline
+      .to(avatar, {
+        x: `+=${doorTarget.x - avatarCenter.x}`,
+        y: `+=${doorTarget.y - avatarCenter.y}`,
+        scale: reduceMotion ? 0.35 : 0.65,
+        duration: travelDuration,
+        ease: "power2.inOut",
+      }, startAt)
+      .to(avatar, {
+        opacity: 0,
+        duration: reduceMotion ? 0.12 : 0.28,
+        ease: "power1.in",
+      }, startAt + travelDuration * 0.72)
+      .set(avatar, { zIndex: 13 }, startAt + travelDuration * 0.82)
+      .call(() => {
+        avatar.remove();
+        completeStudioWhenEmpty();
+      }, [], startAt + travelDuration + 0.02);
+  });
+};
+
+function completeStudioWhenEmpty() {
+  if (state.studioComplete || root.querySelector("[data-studio-avatar]")) {
+    return;
+  }
+
+  if (state.isAnimating || state.handoffInFlight) {
+    requestAnimationFrame(completeStudioWhenEmpty);
+    return;
+  }
+
+  state.studioComplete = true;
+
+  const currentNodeId = state.currentNodeId;
+  const currentNode = getNodeElement(currentNodeId);
+  const currentNodeConfig = nodeGraph[currentNodeId];
+
+  if (currentNodeConfig) {
+    currentNodeConfig.directionTargets = {};
+  }
+
+  delete seamTransitions[currentNodeId];
+
+  const nodesToRemove = Array.from(root.querySelectorAll("[data-node]"))
+    .filter((node) => node !== currentNode);
+  const labelsToRemove = Array.from(root.querySelectorAll(
+    ".path-label, .studio-node-label",
+  ));
+  const elementsToRemove = [...nodesToRemove, ...labelsToRemove];
+
+  nodesToRemove.forEach((node) => {
+    node.disabled = true;
+    node.dataset.clickable = "false";
+  });
+
+  syncNodeState();
+
+  if (elementsToRemove.length === 0) {
+    window.dispatchEvent(new Event("studio-konami:show"));
+    return;
+  }
+
+  gsap.to(elementsToRemove, {
+    opacity: 0,
+    scale: 0.72,
+    duration: 0.32,
+    stagger: { each: 0.025, from: "random" },
+    ease: "steps(4)",
+    onComplete: () => {
+      nodesToRemove.forEach((node) => {
+        const nodeId = node.dataset.nodeId;
+
+        node.remove();
+
+        if (!nodeId) {
+          return;
+        }
+
+        delete nodeGraph[nodeId];
+
+        pieceConfigs.forEach((piece) => {
+          delete piece.nodes[nodeId];
+        });
+      });
+
+      labelsToRemove.forEach((label) => label.remove());
+      window.dispatchEvent(new Event("studio-konami:show"));
+    },
+  });
+}
+
+window.addEventListener("studio-word-cloud:complete", (event) => {
+  const detail = event.detail;
+
+  if (detail?.isFinalVisit && detail.nodeId) {
+    exitStudioAvatars(detail.nodeId);
+  }
+});
+
 const triggerActionForNode = (nodeId) => {
+  triggerStudioWordCloud(nodeId);
+
   switch (nodeId) {
     case "top:branch-left":
       if (!state.inventory.has("code-power")) collectCodePower();

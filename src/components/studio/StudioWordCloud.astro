@@ -1,0 +1,22 @@
+---
+import "./StudioWordCloud.css";
+---
+
+<aside
+  class="studio-word-cloud"
+  data-studio-word-cloud
+  data-speaker=""
+  aria-hidden="true"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div class="studio-word-cloud__panel">
+    <span class="studio-word-cloud__speaker" data-studio-word-cloud-speaker></span>
+    <p class="studio-word-cloud__words" data-studio-word-cloud-words aria-hidden="true"></p>
+    <p class="studio-word-cloud__announcement" data-studio-word-cloud-announcement></p>
+  </div>
+</aside>
+
+<script>
+  import "./StudioWordCloud.js";
+</script>

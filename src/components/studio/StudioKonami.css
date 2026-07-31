@@ -1,0 +1,31 @@
+.studio-konami {
+  position: absolute;
+  z-index: 74;
+  right: 8.5%;
+  bottom: 9%;
+  width: 3.25rem;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.studio-konami__logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+  will-change: filter, transform;
+}
+
+.studio-konami__ribbon {
+  fill-rule: evenodd;
+}
+
+.studio-konami__ribbon--orange {
+  fill: #ff7b18;
+}
+
+.studio-konami__ribbon--red {
+  fill: #ff0018;
+}
