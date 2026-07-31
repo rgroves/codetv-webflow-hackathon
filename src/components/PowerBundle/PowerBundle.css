@@ -1,6 +1,8 @@
 .power-bundle {
   --power-logo-size: 5rem;
   --power-orbit-radius: 7rem;
+  --power-orbit-factor: 1.4;
+  --power-weave-factor: 0.3;
   position: absolute;
   z-index: 5;
   width: 0;
@@ -57,7 +59,18 @@
 
 @media (max-width: 40rem) {
   .power-bundle {
-    --power-logo-size: 4.6rem;
-    --power-orbit-radius: 6rem;
+    --power-logo-size: clamp(2.25rem, 8vw, 3.25rem);
+    --power-orbit-radius: clamp(2.75rem, 11vw, 4.25rem);
+    --power-orbit-factor: 1.25;
+    --power-weave-factor: 0.1;
+  }
+}
+
+@media (max-width: 23.5rem) {
+  .power-bundle {
+    --power-logo-size: 2.125rem;
+    --power-orbit-radius: 2.4rem;
+    --power-orbit-factor: 1.125;
+    --power-weave-factor: 0.08;
   }
 }

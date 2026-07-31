@@ -79,8 +79,12 @@ document.querySelectorAll("[data-power-bundle]").forEach((bundle) => {
 
     const measure = () => {
       const logoSize = logos[0].offsetWidth;
-      orbitRadius = logoSize * 1.4;
-      weaveDistance = logoSize * 0.3;
+      const bundleStyles = getComputedStyle(bundle);
+      const orbitFactor = Number.parseFloat(bundleStyles.getPropertyValue("--power-orbit-factor")) || 1.4;
+      const weaveFactor = Number.parseFloat(bundleStyles.getPropertyValue("--power-weave-factor")) || 0.3;
+
+      orbitRadius = logoSize * orbitFactor;
+      weaveDistance = logoSize * weaveFactor;
       render();
     };
 

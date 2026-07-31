@@ -1,3 +1,61 @@
 .map-section {
   min-height: 100vh;
 }
+
+.power-trail-layer {
+  --power-trail-spread: 150;
+  --power-trail-min-scale: 2;
+  --power-trail-max-scale: 4;
+
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.power-trail-item {
+  position: absolute;
+  font-size: 1.25rem;
+  pointer-events: none;
+}
+
+.power-trail-item--logo {
+  width: 1.6rem;
+  height: 1.6rem;
+  object-fit: contain;
+}
+
+@media (max-width: 40rem) {
+  .power-trail-layer {
+    --power-trail-spread: 72;
+    --power-trail-min-scale: 1;
+    --power-trail-max-scale: 1.8;
+  }
+
+  .power-trail-item {
+    font-size: 0.95rem;
+  }
+
+  .power-trail-item--logo {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+@media (max-width: 23.5rem) {
+  .power-trail-layer {
+    --power-trail-spread: 48;
+    --power-trail-max-scale: 1.5;
+  }
+
+  .power-trail-item {
+    font-size: 0.8rem;
+  }
+
+  .power-trail-item--logo {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+}

@@ -37,3 +37,45 @@
   max-width: 32rem;
   text-wrap: pretty;
 }
+
+@media (max-width: 40rem) {
+  .map-intro {
+    max-width: none;
+    padding: 2rem 5vw 1rem;
+  }
+
+  .map-intro h1 {
+    margin: 0.75rem 0 0.6rem;
+    font-size: clamp(2.1rem, 8vw, 2.8rem);
+    line-height: 0.94;
+  }
+
+  .map-caption {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .map-piece-partial[data-map-piece="home"] {
+    box-sizing: border-box;
+    height: 7rem;
+    padding: 0 5vw;
+  }
+
+  .map-piece-partial[data-map-piece="home"] .node-y-top {
+    top: 50%;
+  }
+}
+
+@media (max-width: 23.5rem) {
+  .map-intro {
+    padding-top: 1rem;
+  }
+
+  .map-intro h1 {
+    font-size: 2rem;
+  }
+
+  .map-caption {
+    font-size: 0.875rem;
+  }
+}

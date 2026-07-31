@@ -99,11 +99,16 @@ if (!root) {
 
 const mapDialog = root.querySelector("[data-map-dialog]");
 const bottomMapSection = root.querySelector('[data-map-piece="bottom"]')?.closest(".map-section");
+const powerTrailLayer = root.querySelector("[data-power-trail-layer]");
 
 const cody = root.querySelector("#cody");
 
 if (!cody) {
   throw new Error("The cody element is missing.");
+}
+
+if (!powerTrailLayer) {
+  throw new Error("The power trail layer is missing.");
 }
 
 // Configure map pieces by defining their corresponding DOM elements and nodes
@@ -479,6 +484,7 @@ async function moveCodyTo(targetNodeId) {
 
 async function playMoveCodyAnimation(cody, targetPosition) {
   const trailItems = state.currentNodeId.startsWith("bottom:") ? [] : state.powerTrailItems;
+  const trailAnimation = getPowerTrailAnimationSettings();
 
   let trailCount = 0;
 
@@ -488,36 +494,34 @@ async function playMoveCodyAnimation(cody, targetPosition) {
     const element = document.createElement(trailItem.type === "logo" ? "img" : "span");
 
     state.powerTrailCursor += 1;
+    element.classList.add("power-trail-item");
 
     if (trailItem.type === "logo") {
+      element.classList.add("power-trail-item--logo");
       element.src = trailItem.src;
       element.alt = "";
       element.setAttribute("aria-hidden", "true");
       element.draggable = false;
     } else {
+      element.classList.add("power-trail-item--emoji");
       element.textContent = trailItem.value;
     }
 
-    document.body.appendChild(element);
+    powerTrailLayer.appendChild(element);
 
     gsap.set(element, {
-      position: "absolute",
-      left: codyRect.left + codyRect.width / 2 + window.scrollX,
-      top: codyRect.top + codyRect.height / 2 + window.scrollY,
-      zIndex: 6,
-      fontSize: "1.25rem",
-      ...getTrailLogoStyle(trailItem),
-      pointerEvents: "none",
+      left: codyRect.left + codyRect.width / 2,
+      top: codyRect.top + codyRect.height / 2,
       xPercent: -50,
       yPercent: -50,
       scale: 1,
     });
 
     gsap.to(element, {
-      x: gsap.utils.random(-150, 150),
-      y: gsap.utils.random(-150, 150),
+      x: gsap.utils.random(-trailAnimation.spread, trailAnimation.spread),
+      y: gsap.utils.random(-trailAnimation.spread, trailAnimation.spread),
       rotation: gsap.utils.random(-25, 25),
-      scale: Math.random() * 2 + 2, // random scale between 1.5 and 3
+      scale: gsap.utils.random(trailAnimation.minScale, trailAnimation.maxScale),
       opacity: 1,
       duration: 0.9,
       ease: "power1.out",
@@ -549,15 +553,14 @@ async function playMoveCodyAnimation(cody, targetPosition) {
   });
 }
 
-function getTrailLogoStyle(trailItem) {
-  if (trailItem.type !== "logo") {
-    return {};
-  }
+function getPowerTrailAnimationSettings() {
+  const styles = getComputedStyle(powerTrailLayer);
+  const readNumber = (property, fallback) => Number.parseFloat(styles.getPropertyValue(property)) || fallback;
 
   return {
-    width: "1.6rem",
-    height: "1.6rem",
-    objectFit: "contain",
+    spread: readNumber("--power-trail-spread", 150),
+    minScale: readNumber("--power-trail-min-scale", 2),
+    maxScale: readNumber("--power-trail-max-scale", 4),
   };
 }
 
