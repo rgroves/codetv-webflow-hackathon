@@ -34,7 +34,7 @@
 .map-caption {
   font-size: clamp(1rem, 2.2vw, 1.2rem);
   line-height: 1.5;
-  max-width: 32rem;
+  max-width: 30rem;
   text-wrap: pretty;
 }
 
