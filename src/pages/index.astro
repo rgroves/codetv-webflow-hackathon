@@ -50,6 +50,12 @@ const westPowerLogos = [
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+      window.scrollTo(0, 0);
+      window.addEventListener("pageshow", () => window.scrollTo(0, 0));
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
