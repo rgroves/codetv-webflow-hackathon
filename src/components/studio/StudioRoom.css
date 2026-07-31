@@ -97,6 +97,32 @@
 
 .studio-room > .node {
   z-index: 70;
+  opacity: 0.36;
+}
+
+.studio-room > .studio-node--entry {
+  top: 18%;
+  left: 50%;
+}
+
+.studio-room > .studio-node--mid {
+  top: 50%;
+  left: 50%;
+}
+
+.studio-room > .studio-node--west {
+  top: 50%;
+  left: 25%;
+}
+
+.studio-room > .studio-node--east {
+  top: 50%;
+  left: 75%;
+}
+
+.studio-room > .studio-node--south {
+  top: 77%;
+  left: 50%;
 }
 
 @media (max-width: 760px) {

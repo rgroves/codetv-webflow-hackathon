@@ -1,9 +1,9 @@
 .studio-rug {
   position: absolute;
   z-index: 12;
-  left: 36.3%;
+  left: 37.5%;
   bottom: 13.3%;
-  width: 35.3%;
+  width: 32%;
   height: 26.8%;
   border: clamp(3px, 0.42vw, 5px) solid var(--studio-ink);
   border-radius: 999px;

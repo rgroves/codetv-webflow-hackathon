@@ -1,0 +1,133 @@
+.studio-avatar {
+  position: absolute;
+  z-index: 72;
+  width: 4rem;
+  height: 7.8rem;
+  margin: 0;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.studio-avatar__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 0.2rem;
+  width: 3rem;
+  height: 0.95rem;
+  margin-left: -1.5rem;
+  border-radius: 50%;
+  background: rgba(8, 10, 8, 0.28);
+  filter: blur(1px);
+}
+
+.studio-avatar__image {
+  position: absolute;
+  inset: 0.1rem 0.1rem 0.45rem;
+  display: block;
+  width: calc(100% - 0.2rem);
+  height: calc(100% - 0.55rem);
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0.18rem 0.18rem rgba(0, 0, 0, 0.22));
+}
+
+.studio-avatar__label,
+.studio-node-label {
+  position: absolute;
+  left: 50%;
+  display: block;
+  width: max-content;
+  max-width: 9.5rem;
+  padding: 0.28rem 0.45rem;
+  border: 3px solid rgba(8, 10, 8, 0.42);
+  border-radius: 0.45rem;
+  background: rgba(255, 248, 216, 0.9);
+  color: #191d1a;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  box-shadow: 0 0.22rem 0 rgba(8, 10, 8, 0.18);
+}
+
+.studio-avatar__label {
+  bottom: -1.45rem;
+}
+
+.studio-avatar--david .studio-avatar__label,
+.studio-avatar--jason .studio-avatar__label,
+.studio-avatar--dennis .studio-avatar__label,
+.studio-avatar--ilja .studio-avatar__label {
+  top: -1.45rem;
+  bottom: auto;
+}
+
+.studio-avatar--jason {
+  top: calc(18% + 2.3rem);
+  left: calc(50% - 3.55rem);
+}
+
+.studio-avatar--cassie {
+  top: calc(50% + 4.8rem);
+  left: calc(50% + 3.5rem);
+}
+
+.studio-avatar--david {
+  top: calc(50% - 2.45rem);
+  left: 25%;
+}
+
+.studio-avatar--steven {
+  top: calc(50% + 2.45rem);
+  left: 25%;
+  transform: translate(-50%, 0);
+}
+
+.studio-avatar--dennis {
+  top: calc(50% + 2.45rem);
+  left: 75%;
+  transform: translate(-50%, 0);
+}
+
+.studio-avatar--dennis .studio-avatar__label {
+  top: auto;
+  bottom: -1.85rem;
+}
+
+.studio-avatar--ilja {
+  top: calc(50% - 2.45rem);
+  left: 75%;
+}
+
+.studio-avatar--henry {
+  top: calc(77% + 2.3rem);
+  left: calc(50% + 3.15rem);
+}
+
+.studio-node-label {
+  z-index: 71;
+  margin: 0;
+  pointer-events: none;
+}
+
+.studio-node-label--west {
+  top: 50%;
+  left: calc(25% - 2.9rem);
+  transform: translate(-100%, -50%);
+}
+
+.studio-node-label--east {
+  top: 50%;
+  left: calc(75% + 2.9rem);
+  transform: translate(0, -50%);
+}
+
+.studio-node-label--south {
+  top: 77%;
+  left: calc(50% - 2.9rem);
+  max-width: 13rem;
+  transform: translate(-100%, -50%);
+}

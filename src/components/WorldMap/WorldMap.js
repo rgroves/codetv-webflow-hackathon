@@ -171,9 +171,11 @@ function getNodePagePosition(nodeId) {
   }
 
   const rect = node.getBoundingClientRect();
+  const isStudioNode = nodeId.startsWith("bottom:");
+
   return {
     x: rect.left + rect.width / 2,
-    y: rect.top + rect.height / 2 + window.scrollY,
+    y: rect.top + rect.height / 2 + (isStudioNode ? rect.height * 0.36 : 0) + window.scrollY,
   };
 }
 
@@ -208,6 +210,7 @@ function setCodyAtNode(nodeId) {
     return;
   }
 
+  cody.dataset.location = nodeId.startsWith("bottom:") ? "studio" : "map";
   cody.style.left = `${position.x}px`;
   cody.style.top = `${position.y}px`;
 }
@@ -427,7 +430,7 @@ async function moveCodyTo(targetNodeId) {
 }
 
 async function playMoveCodyAnimation(cody, targetPosition) {
-  const trailItems = state.powerTrailItems;
+  const trailItems = state.currentNodeId.startsWith("bottom:") ? [] : state.powerTrailItems;
 
   let trailCount = 0;
 
@@ -632,10 +635,28 @@ function revealBottomMapPiece() {
     return;
   }
 
-  nodeGraph["bottom:entry"] = {
-    pieceId: "bottom",
-    directionTargets: {},
-  };
+  Object.assign(nodeGraph, {
+    "bottom:entry": {
+      pieceId: "bottom",
+      directionTargets: { down: "bottom:mid" },
+    },
+    "bottom:mid": {
+      pieceId: "bottom",
+      directionTargets: { up: "bottom:entry", left: "bottom:west", right: "bottom:east", down: "bottom:south" },
+    },
+    "bottom:west": {
+      pieceId: "bottom",
+      directionTargets: { right: "bottom:mid" },
+    },
+    "bottom:east": {
+      pieceId: "bottom",
+      directionTargets: { left: "bottom:mid" },
+    },
+    "bottom:south": {
+      pieceId: "bottom",
+      directionTargets: { up: "bottom:mid" },
+    },
+  });
 
   seamTransitions["top:stop"] = {
     targetNodeId: "bottom:entry",
