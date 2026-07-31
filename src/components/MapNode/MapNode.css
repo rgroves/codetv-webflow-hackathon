@@ -83,3 +83,103 @@
   outline: 4px solid rgba(18, 49, 89, 0.5);
   outline-offset: 6px;
 }
+
+.node__seam-chevrons {
+  --seam-chevron-rotation: 45deg;
+  --seam-chevron-start-x: 0;
+  --seam-chevron-start-y: -0.28rem;
+  --seam-chevron-end-x: 0;
+  --seam-chevron-end-y: 0.28rem;
+
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  left: 50%;
+  display: none;
+  flex-direction: column;
+  gap: 0.05rem;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.node[data-seam-direction] .node__seam-chevrons {
+  display: flex;
+}
+
+.node__seam-chevrons > span {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 0.32rem solid #fff8c4;
+  border-bottom: 0.32rem solid #fff8c4;
+  filter: drop-shadow(0 0.16rem 0 rgba(18, 49, 89, 0.7));
+  opacity: 0;
+  transform: rotate(var(--seam-chevron-rotation));
+  animation: seam-chevron-pulse 1.05s ease-in-out infinite;
+}
+
+.node__seam-chevrons > span:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.node__seam-chevrons > span:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+.node[data-seam-direction="up"] .node__seam-chevrons {
+  --seam-chevron-rotation: 225deg;
+  --seam-chevron-start-y: 0.28rem;
+  --seam-chevron-end-y: -0.28rem;
+
+  top: auto;
+  bottom: calc(100% + 0.65rem);
+  flex-direction: column-reverse;
+}
+
+.node[data-seam-direction="left"] .node__seam-chevrons {
+  --seam-chevron-rotation: 135deg;
+  --seam-chevron-start-x: 0.28rem;
+  --seam-chevron-start-y: 0;
+  --seam-chevron-end-x: -0.28rem;
+  --seam-chevron-end-y: 0;
+
+  top: 50%;
+  right: calc(100% + 0.65rem);
+  left: auto;
+  flex-direction: row-reverse;
+  transform: translateY(-50%);
+}
+
+.node[data-seam-direction="right"] .node__seam-chevrons {
+  --seam-chevron-rotation: -45deg;
+  --seam-chevron-start-x: -0.28rem;
+  --seam-chevron-start-y: 0;
+  --seam-chevron-end-x: 0.28rem;
+  --seam-chevron-end-y: 0;
+
+  top: 50%;
+  left: calc(100% + 0.65rem);
+  flex-direction: row;
+  transform: translateY(-50%);
+}
+
+@keyframes seam-chevron-pulse {
+  0% {
+    opacity: 0;
+    translate: var(--seam-chevron-start-x) var(--seam-chevron-start-y);
+  }
+
+  45% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    translate: var(--seam-chevron-end-x) var(--seam-chevron-end-y);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node__seam-chevrons > span {
+    opacity: 0.9;
+    animation: none;
+  }
+}

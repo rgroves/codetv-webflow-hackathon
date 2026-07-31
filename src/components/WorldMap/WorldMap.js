@@ -256,10 +256,19 @@ function syncNodeState() {
     const isCurrent = nodeId === state.currentNodeId;
     const neighbors = Object.values(nodeGraph[state.currentNodeId]?.directionTargets ?? {});
     const isClickable = !state.isAnimating && neighbors.includes(nodeId);
+    const seamDirection = isCurrent && !state.isAnimating
+      ? seamTransitions[nodeId]?.direction
+      : null;
 
     node.dataset.current = isCurrent ? "true" : "false";
     node.dataset.clickable = isClickable ? "true" : "false";
     node.disabled = !isClickable;
+
+    if (seamDirection) {
+      node.dataset.seamDirection = seamDirection;
+    } else {
+      delete node.dataset.seamDirection;
+    }
 
     if (isCurrent) {
       node.disabled = false;
@@ -374,8 +383,8 @@ async function transitionFromCurrentSeam(direction) {
 
   dismissStudioWordCloud();
   state.isAnimating = true;
-  await shrinkCody();
   syncNodeState();
+  await shrinkCody();
   updateCodyPose(direction, 1);
 
   console.log(`Transitioning from node ${state.currentNodeId} to node ${transition.targetNodeId} across seam in direction ${direction}.`);
@@ -384,10 +393,10 @@ async function transitionFromCurrentSeam(direction) {
   setActivePiece(transition.targetPieceId);
 
   updateCodyPose(direction, 0);
-  syncNodeState();
   setCodyAtNode(state.currentNodeId);
-  unshrinkCody();
+  await unshrinkCody();
   state.isAnimating = false;
+  syncNodeState();
   triggerActionForNode(state.currentNodeId);
 }
 
@@ -413,16 +422,6 @@ function updateCodyPose(direction, intensity = 0) {
   });
 }
 
-function getSeamTransition(nodeId, fromNodeId) {
-  const transition = seamTransitions[nodeId];
-
-  if (!transition || transition.targetNodeId === fromNodeId) {
-    return null;
-  }
-
-  return transition;
-}
-
 async function shrinkCody() {
   // Shrink Cody McCodeface as if falling into the center of a node.
   await gsap.to(cody, {
@@ -440,28 +439,6 @@ async function unshrinkCody() {
     duration: 0.3,
     ease: "power2.inOut",
   });
-}
-
-async function transitionAcrossSeam(fromNodeId, direction) {
-  const transition = getSeamTransition(state.currentNodeId, fromNodeId);
-
-  if (!transition) {
-    return;
-  }
-
-  // Move Cody McCodeface to the original target node before making the transition, to ensure the animation looks correct.
-  state.isAnimating = false;
-  updateCodyPose(direction, 0);
-  syncNodeState();
-  setCodyAtNode(state.currentNodeId);
-  shrinkCody();
-
-  await scrollToPiece(transition.targetPieceId);
-  state.currentNodeId = transition.targetNodeId;
-  setActivePiece(transition.targetPieceId);
-  setCodyAtNode(state.currentNodeId);
-  updateCodyPose(direction, 1);
-  await unshrinkCody();
 }
 
 async function moveCodyTo(targetNodeId) {
@@ -491,7 +468,6 @@ async function moveCodyTo(targetNodeId) {
 
   state.currentNodeId = targetNodeId;
   setActivePiece(nodeGraph[targetNodeId].pieceId);
-  await transitionAcrossSeam(currentNodeId, direction);
 
   state.isAnimating = false;
   updateCodyPose(direction, 0);

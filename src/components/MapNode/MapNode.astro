@@ -8,4 +8,10 @@ const { classMods, nodeType, ariaLabel } = Astro.props;
   class={`node ${classMods}`}
   data-node={nodeType}
   type="button"
-  aria-label={ariaLabel}></button>
+  aria-label={ariaLabel}>
+  <span class="node__seam-chevrons" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
+</button>
