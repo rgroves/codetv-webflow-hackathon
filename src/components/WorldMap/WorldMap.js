@@ -2,6 +2,8 @@ import { gsap, ScrollTrigger } from "../../lib/gsap.js";
 
 // Cooldown period in milliseconds to prevent rapid scroll events.
 const SCROLL_WHEEL_COOLDOWN_MS = 300;
+const SWIPE_MIN_DISTANCE_PX = 40;
+const SWIPE_SCROLL_LOCK_DISTANCE_PX = 8;
 const STUDIO_WORD_CLOUD_DURATION_SECONDS = 8;
 
 const studioNodeMessages = {
@@ -218,6 +220,7 @@ const state = {
   resizePending: false,
   handoffInFlight: false,
   wheelCooldownUntil: 0,
+  touchGesture: null,
   scrollLockCleanup: null,
   inventory: new Set(),
   powerTrailItems: [],
@@ -1112,6 +1115,120 @@ function unlockNativeScroll() {
 
 window.addEventListener("wheel", onWheel, { passive: false });
 
+function getTouchByIdentifier(touchList, identifier) {
+  return Array.from(touchList).find((touch) => touch.identifier === identifier) ?? null;
+}
+
+function getSwipeDirection(deltaX, deltaY) {
+  const horizontalDistance = Math.abs(deltaX);
+  const verticalDistance = Math.abs(deltaY);
+
+  if (Math.max(horizontalDistance, verticalDistance) < SWIPE_MIN_DISTANCE_PX) {
+    return null;
+  }
+
+  if (horizontalDistance > verticalDistance) {
+    return deltaX > 0 ? "left" : "right";
+  }
+
+  return deltaY > 0 ? "up" : "down";
+}
+
+function moveCodyInDirection(direction) {
+  if (mapDialog?.open || state.studioComplete || state.isAnimating || state.handoffInFlight) {
+    return false;
+  }
+
+  const targetNodeId = getTargetNodeForDirection(direction);
+
+  if (targetNodeId) {
+    moveCodyTo(targetNodeId);
+    return true;
+  }
+
+  if (getSeamTransitionForDirection(state.currentNodeId, direction)) {
+    transitionFromCurrentSeam(direction);
+    return true;
+  }
+
+  return false;
+}
+
+function onTouchStart(event) {
+  if (mapDialog?.open || event.touches.length !== 1) {
+    state.touchGesture = null;
+    return;
+  }
+
+  const touch = event.touches[0];
+
+  state.touchGesture = {
+    identifier: touch.identifier,
+    startX: touch.clientX,
+    startY: touch.clientY,
+  };
+}
+
+function onTouchMove(event) {
+  const gesture = state.touchGesture;
+
+  if (!gesture || event.touches.length !== 1) {
+    state.touchGesture = null;
+    return;
+  }
+
+  const touch = getTouchByIdentifier(event.touches, gesture.identifier);
+
+  if (!touch) {
+    state.touchGesture = null;
+    return;
+  }
+
+  const distance = Math.max(
+    Math.abs(touch.clientX - gesture.startX),
+    Math.abs(touch.clientY - gesture.startY),
+  );
+
+  if (distance >= SWIPE_SCROLL_LOCK_DISTANCE_PX) {
+    event.preventDefault();
+  }
+}
+
+function onTouchEnd(event) {
+  const gesture = state.touchGesture;
+  state.touchGesture = null;
+
+  if (!gesture || mapDialog?.open) {
+    return;
+  }
+
+  const touch = getTouchByIdentifier(event.changedTouches, gesture.identifier);
+
+  if (!touch) {
+    return;
+  }
+
+  const direction = getSwipeDirection(
+    touch.clientX - gesture.startX,
+    touch.clientY - gesture.startY,
+  );
+
+  if (!direction) {
+    return;
+  }
+
+  event.preventDefault();
+  moveCodyInDirection(direction);
+}
+
+function onTouchCancel() {
+  state.touchGesture = null;
+}
+
+root.addEventListener("touchstart", onTouchStart, { passive: true });
+root.addEventListener("touchmove", onTouchMove, { passive: false });
+root.addEventListener("touchend", onTouchEnd, { passive: false });
+root.addEventListener("touchcancel", onTouchCancel, { passive: true });
 
 function onNodeClick(event) {
   console.log("Node click event:", event);
