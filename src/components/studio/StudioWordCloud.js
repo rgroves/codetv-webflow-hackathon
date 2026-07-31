@@ -131,8 +131,38 @@ wordClouds.forEach((cloud) => {
       .set(cloud, { y: 0 });
   };
 
+  const dismissCloud = () => {
+    if (!activeDetail) {
+      return;
+    }
+
+    activeTimeline?.kill();
+    gsap.killTweensOf([
+      cloud,
+      panel,
+      speakerLabel,
+      ...cloud.querySelectorAll(".studio-word-cloud__word"),
+    ]);
+
+    activeTimeline = gsap.to(cloud, {
+      opacity: 0,
+      y: -8,
+      duration: reduceMotion.matches ? 0.01 : 0.18,
+      ease: "power1.out",
+      overwrite: true,
+      onComplete: completeCloud,
+    });
+  };
+
   window.addEventListener("studio-word-cloud:show", (event) => {
     showCloud(event.detail ?? {});
+  });
+
+  window.addEventListener("studio-word-cloud:dismiss", dismissCloud);
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+      dismissCloud();
+    }
   });
 
   gsap.set(cloud, { opacity: 0 });

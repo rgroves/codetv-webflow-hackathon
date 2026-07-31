@@ -327,6 +327,10 @@ function getSeamTransitionForDirection(nodeId, direction) {
   return transition;
 }
 
+function dismissStudioWordCloud() {
+  window.dispatchEvent(new Event("studio-word-cloud:dismiss"));
+}
+
 function scrollToPiece(pieceId) {
   const piece = pieceMap.get(pieceId);
 
@@ -368,6 +372,7 @@ async function transitionFromCurrentSeam(direction) {
     return;
   }
 
+  dismissStudioWordCloud();
   state.isAnimating = true;
   await shrinkCody();
   syncNodeState();
@@ -477,6 +482,7 @@ async function moveCodyTo(targetNodeId) {
     return;
   }
 
+  dismissStudioWordCloud();
   state.isAnimating = true;
   syncNodeState();
   updateCodyPose(direction, 1);
