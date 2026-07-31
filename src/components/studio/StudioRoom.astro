@@ -2,7 +2,25 @@
 import "./StudioRoom.css";
 ---
 
-<section class="studio-room" aria-label="CodeTV studio lounge floor plan">
-  <div class="studio-room__floor" aria-hidden="true"></div>
-  <slot />
-</section>
+<div class="studio-camera-shell" data-studio-camera-shell>
+  <div class="studio-camera-viewport" data-studio-camera>
+    <section class="studio-room" aria-label="CodeTV studio lounge floor plan">
+      <div class="studio-room__floor" aria-hidden="true"></div>
+      <slot />
+    </section>
+  </div>
+  <button
+    type="button"
+    class="studio-camera__edge studio-camera__edge--left"
+    data-studio-camera-direction="left"
+    aria-label="Move Cody to the left studio area"
+    disabled
+  ></button>
+  <button
+    type="button"
+    class="studio-camera__edge studio-camera__edge--right"
+    data-studio-camera-direction="right"
+    aria-label="Move Cody to the right studio area"
+    disabled
+  ></button>
+</div>

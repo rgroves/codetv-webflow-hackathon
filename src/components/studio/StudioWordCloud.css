@@ -185,6 +185,28 @@
 
 @media (max-width: 760px) {
   .studio-word-cloud {
+    z-index: 100;
+    left: 28%;
+    width: 44%;
     font-size: 0.8rem;
+  }
+
+  .studio-word-cloud[data-speaker="jason"],
+  .studio-word-cloud[data-speaker="cassie"],
+  .studio-word-cloud[data-speaker="henry"] {
+    left: 28%;
+    width: 44%;
+  }
+
+  .studio-word-cloud[data-speaker="david"],
+  .studio-word-cloud[data-speaker="steven"] {
+    left: 5%;
+    width: 44%;
+  }
+
+  .studio-word-cloud[data-speaker="ilja"],
+  .studio-word-cloud[data-speaker="dennis"] {
+    left: 54%;
+    width: 44%;
   }
 }

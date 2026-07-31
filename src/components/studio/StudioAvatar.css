@@ -131,3 +131,10 @@
   max-width: 13rem;
   transform: translate(-100%, -50%);
 }
+
+@media (max-width: 760px) {
+  .studio-avatar {
+    transform-origin: 50% 100%;
+    scale: 0.84;
+  }
+}

@@ -100,6 +100,10 @@ if (!root) {
 const mapDialog = root.querySelector("[data-map-dialog]");
 const bottomMapSection = root.querySelector('[data-map-piece="bottom"]')?.closest(".map-section");
 const powerTrailLayer = root.querySelector("[data-power-trail-layer]");
+const studioCamera = root.querySelector("[data-studio-camera]");
+const studioCameraShell = root.querySelector("[data-studio-camera-shell]");
+const studioCameraControls = Array.from(root.querySelectorAll("[data-studio-camera-direction]"));
+const mobileStudioCamera = window.matchMedia("(max-width: 760px)");
 
 const cody = root.querySelector("#cody");
 
@@ -109,6 +113,10 @@ if (!cody) {
 
 if (!powerTrailLayer) {
   throw new Error("The power trail layer is missing.");
+}
+
+if (!studioCamera || !studioCameraShell || studioCameraControls.length === 0) {
+  throw new Error("The studio camera is missing.");
 }
 
 // Configure map pieces by defining their corresponding DOM elements and nodes
@@ -249,6 +257,79 @@ function getNodePagePosition(nodeId) {
   };
 }
 
+function updateStudioCameraEdges() {
+  const maxScrollLeft = Math.max(0, studioCamera.scrollWidth - studioCamera.clientWidth);
+  const cameraIsActive =
+    mobileStudioCamera.matches &&
+    state.currentNodeId?.startsWith("bottom:") &&
+    maxScrollLeft > 1;
+  const directionTargets = nodeGraph[state.currentNodeId]?.directionTargets ?? {};
+  const canPanLeft = cameraIsActive && !state.isAnimating && Boolean(directionTargets.left);
+  const canPanRight = cameraIsActive && !state.isAnimating && Boolean(directionTargets.right);
+
+  studioCameraShell.dataset.canPanLeft = canPanLeft ? "true" : "false";
+  studioCameraShell.dataset.canPanRight = canPanRight ? "true" : "false";
+
+  studioCameraControls.forEach((control) => {
+    const direction = control.dataset.studioCameraDirection;
+    control.disabled = direction === "left" ? !canPanLeft : !canPanRight;
+  });
+}
+
+function getStudioCameraTarget(nodeId) {
+  if (!mobileStudioCamera.matches || !nodeId.startsWith("bottom:") || studioCamera.clientWidth === 0) {
+    return null;
+  }
+
+  const node = getNodeElement(nodeId);
+
+  if (!node) {
+    return null;
+  }
+
+  const cameraRect = studioCamera.getBoundingClientRect();
+  const nodeRect = node.getBoundingClientRect();
+  const nodeCenter = nodeRect.left - cameraRect.left + studioCamera.scrollLeft + nodeRect.width / 2;
+  const maxScrollLeft = Math.max(0, studioCamera.scrollWidth - studioCamera.clientWidth);
+  let scrollLeft = Math.min(maxScrollLeft, Math.max(0, nodeCenter - studioCamera.clientWidth / 2));
+
+  if (scrollLeft < 16) {
+    scrollLeft = 0;
+  } else if (maxScrollLeft - scrollLeft < 16) {
+    scrollLeft = maxScrollLeft;
+  }
+
+  return {
+    scrollLeft,
+    x: cameraRect.left + nodeCenter - scrollLeft,
+  };
+}
+
+function setStudioCameraAtNode(nodeId) {
+  if (!mobileStudioCamera.matches) {
+    studioCamera.scrollLeft = 0;
+    updateStudioCameraEdges();
+    return;
+  }
+
+  const target = getStudioCameraTarget(nodeId);
+
+  if (target) {
+    studioCamera.scrollLeft = target.scrollLeft;
+  }
+
+  updateStudioCameraEdges();
+}
+
+function onStudioCameraControlClick(event) {
+  const direction = event.currentTarget.dataset.studioCameraDirection;
+  const targetNodeId = getTargetNodeForDirection(direction);
+
+  if (targetNodeId) {
+    moveCodyTo(targetNodeId);
+  }
+}
+
 // Updates the state of each node based on the current node and its neighbors.
 function syncNodeState() {
   Object.keys(nodeGraph).forEach((nodeId) => {
@@ -279,6 +360,8 @@ function syncNodeState() {
       node.disabled = false;
     }
   });
+
+  updateStudioCameraEdges();
 }
 
 // Sets Cody McCodeface's position on the map based on the specified node's position.
@@ -302,6 +385,7 @@ updateCodyPose("down", 0);
 
 requestAnimationFrame(() => {
   window.scrollTo(0, 0);
+  setStudioCameraAtNode(state.currentNodeId);
   setCodyAtNode(state.currentNodeId);
   ScrollTrigger.refresh();
 });
@@ -319,6 +403,7 @@ function onResize() {
   state.resizePending = true;
 
   requestAnimationFrame(() => {
+    setStudioCameraAtNode(state.currentNodeId);
     setCodyAtNode(state.currentNodeId);
     ScrollTrigger.refresh();
     state.resizePending = false;
@@ -326,6 +411,10 @@ function onResize() {
 }
 
 window.addEventListener("resize", onResize);
+studioCamera.addEventListener("scroll", updateStudioCameraEdges, { passive: true });
+studioCameraControls.forEach((control) => {
+  control.addEventListener("click", onStudioCameraControlClick);
+});
 
 function getTargetNodeForDirection(direction) {
   return nodeGraph[state.currentNodeId]?.directionTargets?.[direction] ?? null;
@@ -398,6 +487,7 @@ async function transitionFromCurrentSeam(direction) {
   setActivePiece(transition.targetPieceId);
 
   updateCodyPose(direction, 0);
+  setStudioCameraAtNode(state.currentNodeId);
   setCodyAtNode(state.currentNodeId);
   await unshrinkCody();
   state.isAnimating = false;
@@ -464,12 +554,18 @@ async function moveCodyTo(targetNodeId) {
     return;
   }
 
+  const studioCameraTarget = getStudioCameraTarget(targetNodeId);
+
+  if (studioCameraTarget) {
+    targetPosition.x = studioCameraTarget.x;
+  }
+
   dismissStudioWordCloud();
   state.isAnimating = true;
   syncNodeState();
   updateCodyPose(direction, 1);
 
-  await playMoveCodyAnimation(cody, targetPosition);
+  await playMoveCodyAnimation(cody, targetPosition, studioCameraTarget);
 
   state.currentNodeId = targetNodeId;
   setActivePiece(nodeGraph[targetNodeId].pieceId);
@@ -482,7 +578,7 @@ async function moveCodyTo(targetNodeId) {
   triggerActionForNode(state.currentNodeId);
 }
 
-async function playMoveCodyAnimation(cody, targetPosition) {
+async function playMoveCodyAnimation(cody, targetPosition, studioCameraTarget = null) {
   const trailItems = state.currentNodeId.startsWith("bottom:") ? [] : state.powerTrailItems;
   const trailAnimation = getPowerTrailAnimationSettings();
 
@@ -545,12 +641,22 @@ async function playMoveCodyAnimation(cody, targetPosition) {
 
   const tl = gsap.timeline({ onUpdate: updateTrail });
 
+  if (studioCameraTarget) {
+    tl.to(studioCamera, {
+      scrollLeft: studioCameraTarget.scrollLeft,
+      duration: 0.45,
+      ease: "power2.inOut",
+    }, 0);
+  }
+
   await tl.to(cody, {
     left: targetPosition.x,
     top: targetPosition.y,
     duration: 0.45,
     ease: "power2.inOut",
-  });
+  }, 0);
+
+  updateStudioCameraEdges();
 }
 
 function getPowerTrailAnimationSettings() {

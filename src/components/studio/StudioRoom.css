@@ -22,6 +22,15 @@
   background-size: 32px 32px;
 }
 
+.studio-camera-shell,
+.studio-camera-viewport {
+  display: contents;
+}
+
+.studio-camera__edge {
+  display: none;
+}
+
 .studio-room {
   --studio-ink: #191d1a;
   --studio-ink-soft: #27302a;
@@ -126,13 +135,92 @@
 }
 
 @media (max-width: 760px) {
+  .map-piece[data-map-piece="bottom"] {
+    z-index: auto;
+    perspective: none;
+  }
+
   .map-piece[data-map-piece="bottom"] .piece-frame {
     align-items: start;
-    overflow-x: auto;
+    overflow: hidden;
+  }
+
+  .studio-camera-shell {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .studio-camera-viewport {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .studio-camera__edge {
+    position: absolute;
+    z-index: 85;
+    top: 0;
+    bottom: 0;
+    display: grid;
+    width: 2rem;
+    padding: 0;
+    border: 0;
+    place-items: center;
+    color: rgba(255, 248, 216, 0.92);
+    cursor: pointer;
+    font-size: 1.6rem;
+    font-weight: 900;
+    opacity: 0;
+    pointer-events: none;
+    text-shadow: 2px 2px 0 rgba(8, 10, 8, 0.8);
+    transition: opacity 0.2s ease;
+  }
+
+  .studio-camera__edge::after {
+    line-height: 1;
+  }
+
+  .studio-camera__edge--left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(8, 10, 8, 0.62), transparent);
+  }
+
+  .studio-camera__edge--left::after {
+    content: "‹";
+  }
+
+  .studio-camera__edge--right {
+    right: 0;
+    background: linear-gradient(-90deg, rgba(8, 10, 8, 0.62), transparent);
+  }
+
+  .studio-camera__edge--right::after {
+    content: "›";
+  }
+
+  .studio-camera-shell[data-can-pan-left="true"] .studio-camera__edge--left,
+  .studio-camera-shell[data-can-pan-right="true"] .studio-camera__edge--right {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .studio-camera__edge:focus-visible {
+    outline: 3px solid rgba(255, 248, 216, 0.92);
+    outline-offset: -4px;
   }
 
   .studio-room {
-    width: 720px;
+    width: max(37.5rem, 100%);
     max-width: none;
+    isolation: auto;
+  }
+}
+
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .studio-camera__edge {
+    transition: none;
   }
 }
