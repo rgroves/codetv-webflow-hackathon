@@ -45,6 +45,15 @@ const westPowerLogos = [
   { name: "CSS", src: cssLogo.src },
   { name: "Astro", src: astroLogo.src },
 ];
+
+const pageTitle = "CodeTV Web Dev Challenge S3.E5 Tribute";
+const documentTitle = `${pageTitle} | CodeTV x Webflow Hackathon Entry`;
+const pageDescription =
+  "An interactive CodeTV x Webflow hackathon tribute built with Astro and GSAP, following Cody McCodeface on the road to the CodeTV studio.";
+const canonicalUrl = "https://codetv-webflow-hackathon.webflow.io/";
+const socialImageUrl = `${canonicalUrl}site-cover.png`;
+const socialImageAlt =
+  "Cover art reading 'The Road to CodeTV's Web Dev Challenge' above Cody McCodeface on a map marker under a blue sky.";
 ---
 
 <html lang="en">
@@ -57,12 +66,28 @@ const westPowerLogos = [
       window.addEventListener("pageshow", () => window.scrollTo(0, 0));
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
     <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={pageDescription} />
     <meta name="generator" content={Astro.generator} />
-    <title>
-      CodeTV Web Dev Challenge S3.E5 Tribute - A CodeTV x Webflow Hackathon
-      Entry
-    </title>
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={pageTitle} />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:secure_url" content={socialImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="646" />
+    <meta property="og:image:alt" content={socialImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={documentTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
+    <title>{documentTitle}</title>
   </head>
   <body>
     <WorldMap>
